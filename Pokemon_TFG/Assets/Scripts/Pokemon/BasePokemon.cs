@@ -23,7 +23,7 @@ public class BasePokemon
     private int spDefense;
     private int speed;
 
-    private Dictionary<int, Move> learnableMoves;
+    private Dictionary<int, Move> learnableMoves = new Dictionary<int, Move>();
 
     public BasePokemon(string name, int id, Sprite frontSprite, Sprite backSprite, PokemonType type1, PokemonType type2, int maxHp, int attack, int defense, int spAttack, int spDefense, int speed)
     {

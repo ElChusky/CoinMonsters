@@ -182,7 +182,7 @@ GameObject:
   - component: {fileID: 627229756}
   - component: {fileID: 627229758}
   - component: {fileID: 627229757}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Buildings_UnderChar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -16152,7 +16152,7 @@ GameObject:
   - component: {fileID: 888323166}
   - component: {fileID: 888323165}
   - component: {fileID: 888323164}
-  m_Layer: 8
+  m_Layer: 9
   m_Name: Buildings_OverChar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -108915,7 +108915,7 @@ GameObject:
   - component: {fileID: 1696808484}
   - component: {fileID: 1696808483}
   - component: {fileID: 1696808482}
-  m_Layer: 9
+  m_Layer: 8
   m_Name: PuebloHojaVerde
   m_TagString: puebloHojaVerde
   m_Icon: {fileID: 0}
@@ -109198,8 +109198,8 @@ TilemapRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: -60943689
-  m_SortingLayer: 0
+  m_SortingLayerID: 2040594291
+  m_SortingLayer: 2
   m_SortingOrder: 1
   m_ChunkSize: {x: 32, y: 32, z: 32}
   m_ChunkCullingBounds: {x: 0, y: 0, z: 0}
@@ -109530,10 +109530,10 @@ MonoBehaviour:
   player: {fileID: 1745246845}
   buildings:
     serializedVersion: 2
-    m_Bits: 256
+    m_Bits: 512
   longGrass:
     serializedVersion: 2
-    m_Bits: 512
+    m_Bits: 256
 --- !u!95 &1745246849
 Animator:
   serializedVersion: 3
