@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    public BattleLoader battleLoader;
 
     public float walkSpeed = 3f;
     public bool isMoving = false;
@@ -90,8 +91,7 @@ public class PlayerController : MonoBehaviour
             Physics2D.OverlapCollider(player.GetComponent<Collider2D>(), new ContactFilter2D().NoFilter(), colliders);
 
             string enteredGrass = colliders[0].gameObject.tag;
-
-            int[][] specificGrass;
+            int[] encounter;
 
             float probability = Random.Range(0.0f, 100.0f);
 
@@ -103,25 +103,29 @@ public class PlayerController : MonoBehaviour
 
             if (probability <= veryRare * 100)
             {
-                specificGrass = Utils.GetEncounters(colliders[0].gameObject.tag, rarityLvl);
                 rarityLvl = 5;
-                Debug.Log("Encountered a Very Rare Pokemon");
+                encounter = Utils.GetEncounters(enteredGrass, rarityLvl);
+                battleLoader.LoadBattle(encounter[1], encounter[2]);
             } else if(probability <= rare * 100)
             {
                 rarityLvl = 4;
-                Debug.Log("Encountered a Rare Pokemon");
+                encounter = Utils.GetEncounters(enteredGrass, rarityLvl);
+                battleLoader.LoadBattle(encounter[1], encounter[2]);
             } else if(probability <= semiRare * 100)
             {
                 rarityLvl = 3;
-                Debug.Log("Encountered a Semi Rare Pokemon");
+                encounter = Utils.GetEncounters(enteredGrass, rarityLvl);
+                battleLoader.LoadBattle(encounter[1], encounter[2]);
             } else if (probability <= common * 100)
             {
                 rarityLvl = 2;
-                Debug.Log("Encountered a Common Pokemon");
+                encounter = Utils.GetEncounters(enteredGrass, rarityLvl);
+                battleLoader.LoadBattle(encounter[1], encounter[2]);
             } else if(probability <= veryCommon * 100)
             {
                 rarityLvl = 1;
-                Debug.Log("Encountered a Very Common Pokemon");
+                encounter = Utils.GetEncounters(enteredGrass, rarityLvl);
+                battleLoader.LoadBattle(encounter[1], encounter[2]);
             }
         }
     }

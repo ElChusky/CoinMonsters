@@ -32,6 +32,9 @@ public class BattleSystem : MonoBehaviour
         playerHud.SetData(playerUnit.Pokemon);
         enemyUnit.Setup();
         enemyHud.SetData(enemyUnit.Pokemon);
+
+        dialogBox.SetMoveNames(playerUnit.Pokemon.LearntMoves);
+
         yield return dialogBox.TypeDialog("Ha aparecido un " + enemyUnit.Pokemon.BasePoke.Name + " salvaje.");
 
         yield return new WaitForSeconds(1f);
@@ -50,6 +53,9 @@ public class BattleSystem : MonoBehaviour
     private void PlayerAction()
     {
         state = BattleState.PlayerAction;
+        dialogBox.EnableMoveSelector(false);
+        dialogBox.EnableDialogText(true);
+        dialogBox.EnableActionSelector(true);
         StartCoroutine(dialogBox.TypeDialog("¿Que debería hacer " + playerUnit.Pokemon.BasePoke.Name + "?"));
         dialogBox.EnableActionSelector(true);
     }
@@ -105,7 +111,17 @@ public class BattleSystem : MonoBehaviour
                     //Run
                     break;
             }
+        } else if (Input.GetKeyDown(KeyCode.X))
+        {
+            switch (state)
+            {
+                case BattleState.PlayerMove:
+                    //Fight
+                    PlayerAction();
+                    break;
+            }
         }
     }
+
 
 }

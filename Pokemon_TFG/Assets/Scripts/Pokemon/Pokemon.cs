@@ -58,6 +58,8 @@ public class Pokemon
 
     public int CurrentHP { get => currentHP; set => currentHP = value; }
 
+    public Move[] LearntMoves { get => learntMoves; set => learntMoves = value; }
+
     #region Pokemon IV
     public int HpIV { get => hpIV; set => hpIV = value; }
     public int AttackIV { get => attackIV; set => attackIV = value; }
@@ -89,74 +91,96 @@ public class Pokemon
 
     private void GiveLearntMoves()
     {
-        #region Codigo para dar 1 move de cada tipo, y cuando ya se hayan dado, dar en funcion de la stat mas alta hasta 4 moves si se puede. (Echar un ojo y modificar)
-        /*
-        bool tieneFisico = false, tieneEspecial = false, tieneStatus = false;
-        Dictionary<int, Move> moves = BasePoke.LearnableMoves;
-        //With this loop we give 1 attack of each type, physical dmg, special dmg and status move if there are any
-        for(int levelAt = level; levelAt > 0; levelAt--)
+        List<Tuple<int, Move>> moves = BasePoke.LearnableMoves;
+        
+        int numMoves = 0;
+        List<Move> learnableMoves = new List<Move>();
+        foreach (Tuple<int, Move> move in moves)
         {
-            Move currentMove;
-            if(moves.TryGetValue(levelAt, out currentMove) && (!tieneFisico || !tieneEspecial || !tieneStatus))
+            if (move.Item1 <= level)
             {
-                if(currentMove.DamageClass.Equals("physical") && !tieneFisico)
+                learnableMoves.Add(move.Item2);
+                numMoves++;
+            }
+        }
+        if (numMoves <= 4)
+        {
+            for (int i = 0; i < learnableMoves.Count; i++)
+            {
+                learntMoves[i] = learnableMoves[i];
+            }
+        }
+        else
+        {
+            #region Codigo para dar 1 move de cada tipo, y cuando ya se hayan dado, dar en funcion de la stat mas alta hasta 4 moves si se puede. (Echar un ojo y modificar)
+
+            bool tieneFisico = false, tieneEspecial = false, tieneStatus = false;
+            //With this loop we give 1 attack of each type, physical dmg, special dmg and status move if there are any
+            foreach (Move currentMove in learnableMoves)
+            {
+                if (currentMove.DamageClass.Equals("physical") && !tieneFisico)
                 {
                     for (int i = 0; i < learntMoves.Length; i++)
                     {
-                        if(learntMoves[i] == null)
+                        if (learntMoves[i] == null)
                         {
                             learntMoves[i] = currentMove;
                             tieneFisico = true;
                             break;
                         }
                     }
-                } else if(currentMove.DamageClass.Equals("special") && !tieneEspecial)
+                }
+                else if (currentMove.DamageClass.Equals("special") && !tieneEspecial)
                 {
                     for (int i = 0; i < learntMoves.Length; i++)
                     {
-                        if(learntMoves[i] == null)
+                        if (learntMoves[i] == null)
                         {
                             learntMoves[i] = currentMove;
                             tieneEspecial = true;
                             break;
                         }
                     }
-                } else if(currentMove.DamageClass.Equals("status") && !tieneStatus)
+                }
+                else if (currentMove.DamageClass.Equals("status") && !tieneStatus)
                 {
                     for (int i = 0; i < learntMoves.Length; i++)
                     {
-                        if(learntMoves[i] == null)
+                        if (learntMoves[i] == null)
                         {
                             learntMoves[i] = currentMove;
                             tieneStatus = true;
                         }
                     }
                 }
-            }
-            if(tieneFisico && tieneEspecial && tieneStatus)
-            {
-                break;
-            }
-        }
-        //Now we will check which base stat of the pokemon is higher, so we choose to give another physical dmg move (attack higher),
-        //another special dmg move (sp attack higher) or another status move (hp, defense or sp defense higher)
-        for (int higherStat = 0; higherStat < learntMoves.Length; higherStat++)
-        {
-            string damageClass = DamageClassSearch(higherStat);
-            for (int levelAt = level; levelAt > 0; levelAt--)
-            {
-                Move currentMove;
-                if (moves.TryGetValue(levelAt, out currentMove))
+                if (tieneFisico && tieneEspecial && tieneStatus)
                 {
+                    break;
+                }
+            }
+            //Now we will check which base stat of the pokemon is higher, so we choose to give another physical dmg move (attack higher),
+            //another special dmg move (sp attack higher) or another status move (hp, defense or sp defense higher)
+            for (int higherStat = 0; higherStat < learntMoves.Length; higherStat++)
+            {
+                string damageClass = DamageClassSearch(higherStat);
+                for (int index = 0; index < learnableMoves.Count; index++)
+                {
+                    Move currentMove = learnableMoves[index];
                     if (currentMove.DamageClass.Equals(damageClass))
                     {
                         bool learnt = false;
                         for (int i = 0; i < learntMoves.Length; i++)
                         {
-                            if (learntMoves[i] == null)
+                            if (learntMoves[i] == null && !learnt)
                             {
                                 learntMoves[i] = currentMove;
-                            } else
+                                index = moves.Count;
+                                if (LearntMoves[4] != null)
+                                {
+                                    higherStat = learntMoves.Length;
+                                }
+                            }
+                            else
                             {
                                 if (currentMove.Equals(learntMoves[i]))
                                 {
@@ -166,35 +190,12 @@ public class Pokemon
                         }
                     }
                 }
+
             }
-        }*/
-        #endregion
-        int numMoves = 0;
-        List<Move> learnableMoves = new List<Move>();
-        for (int levelAt = level; levelAt > 0; levelAt--)
-        {
-            if (basePoke.LearnableMoves.TryGetValue(levelAt, out Move currentMove))
-            {
-                learnableMoves.Add(currentMove);
-                numMoves++;
-            }
-        }
-        if (numMoves <= 4)
-        {
-            foreach (Move move in learnableMoves)
-            {
-                for (int i = 0; i < learntMoves.Length; i++)
-                {
-                    learntMoves[i] = move;
-                }
-            }
-        }
-        else
-        {
-            //
+            #endregion
         }
     }
-    /*
+
     private string DamageClassSearch(int highStatPos)
     {
         string damageClass = "";
@@ -249,5 +250,5 @@ public class Pokemon
         }
 
         return damageClass;
-    }*/
+    }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -23,9 +24,9 @@ public class BasePokemon
     private int spDefense;
     private int speed;
 
-    private Dictionary<int, Move> learnableMoves = new Dictionary<int, Move>();
+    private List<Tuple<int, Move>> learnableMoves = new List<Tuple<int, Move>>();
 
-    public BasePokemon(string name, int id, Sprite frontSprite, Sprite backSprite, PokemonType type1, PokemonType type2, int maxHp, int attack, int defense, int spAttack, int spDefense, int speed)
+    public BasePokemon(string name, int id, Sprite frontSprite, Sprite backSprite, PokemonType type1, PokemonType type2, int maxHp, int attack, int defense, int spAttack, int spDefense, int speed, List<Tuple<int, Move>> learnableMoves)
     {
         this.name = name;
         this.id = id;
@@ -39,6 +40,7 @@ public class BasePokemon
         this.spAttack = spAttack;
         this.spDefense = spDefense;
         this.speed = speed;
+        this.learnableMoves = learnableMoves;
     }
 
     public string Name { get => name; set => name = value; }
@@ -50,7 +52,7 @@ public class BasePokemon
     public int Speed { get => speed; set => speed = value; }
     public Sprite FrontSprite { get => frontSprite; set => frontSprite = value; }
     public Sprite BackSprite { get => backSprite; set => backSprite = value; }
-    public Dictionary<int, Move> LearnableMoves { get => learnableMoves; set => learnableMoves = value; }
+    public List<Tuple<int, Move>> LearnableMoves { get => learnableMoves; set => learnableMoves = value; }
     public int Id { get => id; set => id = value; }
 }
 

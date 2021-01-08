@@ -64,5 +64,17 @@ public class BattleDialogBox : MonoBehaviour
         }
     }
 
-
+    public void SetMoveNames(Move[] learnedMoves)
+    {
+        for (int i = 0; i < learnedMoves.Length; i++)
+        {
+            if(learnedMoves[i] == null)
+            {
+                moveTexts[i].text = "-";
+            } else
+            {
+                moveTexts[i].text = learnedMoves[i].Name;
+            }
+        }
+    }
 }

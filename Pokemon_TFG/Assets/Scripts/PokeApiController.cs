@@ -4,6 +4,7 @@ using UnityEngine;
 using SimpleJSON;
 using UnityEngine.Networking;
 using System.IO;
+using System;
 
 public static class PokeApiController
 {
@@ -13,9 +14,20 @@ public static class PokeApiController
             pokemon = tempPoke;
             });*/
 
-private static string apiBaseURL = "https://pokeapi.co/api/v2/";
-    public static IEnumerator GetBasePokemonWithID(int id, System.Action<BasePokemon> tempPoke)
-   {
+    private static BasePokemon basePokemon;
+
+    private static int pokeLevel;
+
+    private static List<Tuple<int, Move>> learnableMoves;
+
+    private static string apiBaseURL = "https://pokeapi.co/api/v2/";
+
+    public static BasePokemon BasePokemon { get => basePokemon; set => basePokemon = value; }
+    public static List<Tuple<int, Move>> LearnableMoves { get => learnableMoves; set => learnableMoves = value; }
+    public static int PokeLevel { get => pokeLevel; set => pokeLevel = value; }
+
+    public static IEnumerator GetBasePokemonWithID(int id)
+    {
         //We get the Sprites of our Pokemon from the Data Path
         //(dataPath is: in Unity => "projectPath/Assets/"
         //in Windows/Linux => "executablename_Data" folder
@@ -29,7 +41,7 @@ private static string apiBaseURL = "https://pokeapi.co/api/v2/";
 
         //We make the request and check for errors
         yield return pokeInfoRequest.SendWebRequest();
-        
+
         if (pokeInfoRequest.isNetworkError || pokeInfoRequest.isHttpError)
         {
             Debug.LogError(pokeInfoRequest.error);
@@ -40,11 +52,12 @@ private static string apiBaseURL = "https://pokeapi.co/api/v2/";
         JSONNode pokeInfo = JSON.Parse(pokeInfoRequest.downloadHandler.text);
 
         //We obtain the name of the pokemon
-        string pokeName = pokeInfo["name"];
+        string pokeName = ((string)pokeInfo["name"]).ToUpper();
 
         //We obtain the types of the pokemon
         JSONNode pokeTypes = pokeInfo["types"];
         PokemonType[] types = new PokemonType[2];
+        //In case the Pokemon has only 1 type, we set the second type as None in advance. If the Poke has 2 typs, it will be changed.
         types[1] = PokemonType.None;
 
         for (int i = 0; i < pokeTypes.Count; i++)
@@ -116,11 +129,13 @@ private static string apiBaseURL = "https://pokeapi.co/api/v2/";
         int baseSpeed = pokeStats[5]["base_stat"];
 
         //We give the BasePokemon object with the data back to the function
-        tempPoke(new BasePokemon(pokeName, id, frontSprite, backSprite, types[0], types[1], baseHP, baseAttack, baseDefense, baseSpAttack, baseSpDefense, baseSpeed));
-   }
+        basePokemon = new BasePokemon(pokeName, id, frontSprite, backSprite, types[0], types[1], baseHP, baseAttack, baseDefense, baseSpAttack, baseSpDefense, baseSpeed, learnableMoves);
+    }
 
-    public static IEnumerator GetLearnableMoves(int id, System.Action<Dictionary<int, Move>> learnableMoves)
+    public static IEnumerator GetLearnableMoves(int id, int level)
     {
+        //Hacer aqui lo de elegir los ataques.
+        pokeLevel = level;
         UnityWebRequest pokeInfoRequest = UnityWebRequest.Get(apiBaseURL + "pokemon/" + id);
 
         yield return pokeInfoRequest.SendWebRequest();
@@ -137,13 +152,13 @@ private static string apiBaseURL = "https://pokeapi.co/api/v2/";
         JSONNode pokeMoves = pokeInfo["moves"];
 
         //We create a dictionary, in which we will add all the moves learned by level
-        Dictionary<int, Move> moves = new Dictionary<int, Move>();
+        List<Tuple<int, Move>> moves = new List<Tuple<int, Move>>();
 
         JSONNode pokeVersions;
         string pokemonVersion, learnMethod;
 
         //We go through all the moves, to get its info
-        for(int currentPokeMove = 0; currentPokeMove < pokeMoves.Count; currentPokeMove++)
+        for(int currentPokeMove = pokeMoves.Count - 1; currentPokeMove > 0; currentPokeMove--)
         {
             pokeVersions = pokeMoves[currentPokeMove]["version_group_details"];
 
@@ -248,6 +263,7 @@ private static string apiBaseURL = "https://pokeapi.co/api/v2/";
                             if (descLang.Equals("es"))
                             {
                                 description = descriptions[currentDescription]["flavor_text"];
+                                break;
                             }
                         }
 
@@ -261,20 +277,20 @@ private static string apiBaseURL = "https://pokeapi.co/api/v2/";
                             if (nameLang.Equals("es"))
                             {
                                 name = names[currentName]["name"];
+                                break;
                             }
                         }
-                        Debug.Log("Learnable Move: " + name);
                         //Finally, we create the move and add it to the temporal dictionary that we will return
                         learnableMove = new Move(name, description, type, power, accuracy, pp, damageClass);
 
-                        moves.Add(learnedAt, learnableMove);
+                        moves.Add(new Tuple<int, Move>(learnedAt, learnableMove));
+                        break;
                     }
                     //We break the for loop, since we already found the diamond_pearl game and the info about the move within it.
-                    break;
                 }
             }
         }
-        learnableMoves(moves);
+        learnableMoves = moves;
     }
 
     private static Texture2D LoadTexture(string filePath)
@@ -292,7 +308,7 @@ private static string apiBaseURL = "https://pokeapi.co/api/v2/";
         return null;
     }
 
-    private static Sprite LoadNewSprite(string filePath, float PixelsPerUnit = 100.0f)
+    public static Sprite LoadNewSprite(string filePath, float PixelsPerUnit = 100.0f)
     {
         Sprite NewSprite;
         Texture2D SpriteTexture = LoadTexture(filePath);

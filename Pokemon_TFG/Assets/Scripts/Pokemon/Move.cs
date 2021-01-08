@@ -10,7 +10,7 @@ public class Move
 
     private PokemonType type;
 
-    private int power;
+    private int? power;
 
     private int accuracy;
 
@@ -18,7 +18,7 @@ public class Move
 
     private string damageClass;
 
-    public Move(string name, string description, PokemonType type, int power, int accuracy, int pp, string damageClass)
+    public Move(string name, string description, PokemonType type, int? power, int accuracy, int pp, string damageClass)
     {
         this.name = name;
         this.description = description;
@@ -32,7 +32,7 @@ public class Move
     public string Name { get => name; set => name = value; }
     public string Description { get => description; set => description = value; }
     public PokemonType Type { get => type; set => type = value; }
-    public int Power { get => power; set => power = value; }
+    public int? Power { get => power; set => power = value; }
     public int Accuracy { get => accuracy; set => accuracy = value; }
     public int Pp { get => pp; set => pp = value; }
     public string DamageClass { get => damageClass; set => damageClass = value; }
