@@ -12,8 +12,11 @@ public class BattleHud : MonoBehaviour
     public HP_Bar_Control hpBar;
     public bool isPlayer;
 
-    public void SetData(Pokemon pokemon)
+    private Pokemon pokemon;
+
+    public void SetData(Pokemon poke)
     {
+        pokemon = poke;
         pokemonName.text = pokemon.BasePoke.Name;
         pokemonLevel.text = pokemon.Level.ToString();
         hpBar.SetHp((float )pokemon.CurrentHP / pokemon.MaxHp);
@@ -23,5 +26,17 @@ public class BattleHud : MonoBehaviour
             currentHP.text = pokemon.CurrentHP.ToString();
             maxHP.text = pokemon.MaxHp.ToString();
         }
+    }
+
+    public IEnumerator UpdateHP()
+    {
+        if (isPlayer)
+        {
+            currentHP.text = pokemon.CurrentHP.ToString();
+            maxHP.text = pokemon.MaxHp.ToString();
+        }
+
+        yield return hpBar.SetHPSmoothly((float)pokemon.CurrentHP / pokemon.MaxHp);
+
     }
 }

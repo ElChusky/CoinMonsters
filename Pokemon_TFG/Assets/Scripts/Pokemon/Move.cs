@@ -10,32 +10,36 @@ public class Move
 
     private PokemonType type;
 
-    private int? power;
+    private int power;
 
     private int accuracy;
 
-    private int pp;
+    private int basePP;
+
+    private int currentPP;
 
     private string damageClass;
 
-    public Move(string name, string description, PokemonType type, int? power, int accuracy, int pp, string damageClass)
+    public Move(string name, string description, PokemonType type, int power, int accuracy, int basePP, string damageClass)
     {
         this.name = name;
         this.description = description;
         this.type = type;
         this.power = power;
         this.accuracy = accuracy;
-        this.pp = pp;
+        this.basePP = basePP;
+        this.currentPP = basePP;
         this.damageClass = damageClass;
     }
 
     public string Name { get => name; set => name = value; }
     public string Description { get => description; set => description = value; }
     public PokemonType Type { get => type; set => type = value; }
-    public int? Power { get => power; set => power = value; }
+    public int Power { get => power; set => power = value; }
     public int Accuracy { get => accuracy; set => accuracy = value; }
-    public int Pp { get => pp; set => pp = value; }
+    public int BasePp { get => basePP; set => basePP = value; }
     public string DamageClass { get => damageClass; set => damageClass = value; }
+    public int CurrentPP { get => currentPP; set => currentPP = value; }
 
     public bool Equals(Move otherMove)
     {

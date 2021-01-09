@@ -79,16 +79,6 @@ public class Pokemon
         SpeedIV = UnityEngine.Random.Range(1, 32);
     }
 
-
-    /*TO DO:
-    **Crear metodo para darle a los pokemons salvajes ataques. La idea es que se le de un ataque de cada tipo (físico, especial y de status)
-    **Hay que buscar los ataques desde el final para darles los ultimos ataques de cada clase (aunque puede no ser los mejores, pero unlucky)
-    **-Idea-: Crear booleans de tieneFisico, tieneEspecial y tieneStatus, para cuando se les haya dado los 3 ataques, en caso de que no haya, darle otros.
-    **Una vez se les ha dado 1 de cada tipo, comprobar que stat base del pokemon es mas alta. (Si es HP, defensa o def. special, darle el 4º ataque de status si hay,
-    **si es ataque, darle el 4º ataque de fisico si hay, y si es ataque especial, darle el 4º ataque de especial si hay).Poner los boolean de nuevo a false.
-    **Si no había, hacer lo mismo con la segunda stat mas alta, así hasta darle 4 ataques. Si no se le puede dar 4, entonces se le deja con los que tenga.
-    */
-
     private void GiveLearntMoves()
     {
         List<Tuple<int, Move>> moves = BasePoke.LearnableMoves;
@@ -250,5 +240,32 @@ public class Pokemon
         }
 
         return damageClass;
+    }
+
+    public bool TakeDamage(Move move, Pokemon attacker)
+    {
+        float modifiers = UnityEngine.Random.Range(0.85f, 1f);
+        float a = (2 * attacker.Level + 10) / 250f;
+        float d = a * move.Power * ((float)attacker.Attack / Defense) + 2;
+        int damage = Mathf.FloorToInt(d * modifiers);
+
+        CurrentHP -= damage;
+
+        if(currentHP <= 0)
+        {
+            currentHP = 0;
+            return true;
+        }
+        return false;
+    }
+
+    public Move GetRandomMove()
+    {
+        int moveIndex = 0;
+        do
+        {
+            moveIndex = UnityEngine.Random.Range(0, learntMoves.Length);
+        } while (learntMoves[moveIndex] == null);
+        return learntMoves[moveIndex];
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -12,6 +13,18 @@ public class BattleSystem : MonoBehaviour
 
     private BattleState state;
     private int currentAction;
+    private int currentMove;
+
+    private bool crActive = false;
+
+    private Coroutine actionRoutine;
+
+    private IEnumerator CoroutineTypeText(string text)
+    {
+        crActive = true;
+        yield return dialogBox.TypeDialog(text);
+        crActive = false;
+    }
 
     public enum BattleState{
         Start,
@@ -35,7 +48,7 @@ public class BattleSystem : MonoBehaviour
 
         dialogBox.SetMoveNames(playerUnit.Pokemon.LearntMoves);
 
-        yield return dialogBox.TypeDialog("Ha aparecido un " + enemyUnit.Pokemon.BasePoke.Name + " salvaje.");
+        yield return CoroutineTypeText("Ha aparecido un " + enemyUnit.Pokemon.BasePoke.Name + " salvaje.");
 
         yield return new WaitForSeconds(1f);
 
@@ -45,18 +58,29 @@ public class BattleSystem : MonoBehaviour
     private void PlayerMove()
     {
         state = BattleState.PlayerMove;
+
         dialogBox.EnableActionSelector(false);
         dialogBox.EnableDialogText(false);
+
         dialogBox.EnableMoveSelector(true);
     }
 
     private void PlayerAction()
     {
+        if(crActive)
+        {
+            StopCoroutine(actionRoutine);
+            crActive = false;
+        }
+
         state = BattleState.PlayerAction;
+
         dialogBox.EnableMoveSelector(false);
         dialogBox.EnableDialogText(true);
         dialogBox.EnableActionSelector(true);
-        StartCoroutine(dialogBox.TypeDialog("¿Que debería hacer " + playerUnit.Pokemon.BasePoke.Name + "?"));
+
+        actionRoutine = StartCoroutine(CoroutineTypeText("¿Que debería hacer " + playerUnit.Pokemon.BasePoke.Name + "?"));
+
         dialogBox.EnableActionSelector(true);
     }
 
@@ -65,6 +89,9 @@ public class BattleSystem : MonoBehaviour
         if(state == BattleState.PlayerAction)
         {
             HandleActionSelection();
+        } else if(state == BattleState.PlayerMove)
+        {
+            HandleMoveSelection();
         }
     }
 
@@ -111,17 +138,127 @@ public class BattleSystem : MonoBehaviour
                     //Run
                     break;
             }
-        } else if (Input.GetKeyDown(KeyCode.X))
+        }
+    }
+
+    private void HandleMoveSelection()
+    {
+        if (Input.GetKeyDown(KeyCode.DownArrow))
         {
-            switch (state)
+            if (currentMove < 2)
             {
-                case BattleState.PlayerMove:
-                    //Fight
-                    PlayerAction();
-                    break;
+                if(!dialogBox.moveTexts[currentMove + 2].text.Equals("-"))
+                    currentMove += 2;
+            }
+        }
+        else if (Input.GetKeyDown(KeyCode.UpArrow))
+        {
+            if (currentMove > 1)
+            {
+                if(!dialogBox.moveTexts[currentMove - 2].text.Equals("-"))
+                    currentMove -= 2;
+            }
+        }
+        else if (Input.GetKeyDown(KeyCode.RightArrow))
+        {
+            if (currentMove == 0 || currentAction == 2)
+            {
+                if(!dialogBox.moveTexts[currentMove + 1].text.Equals("-"))
+                    currentMove++;
+            }
+        }
+        else if (Input.GetKeyDown(KeyCode.LeftArrow))
+        {
+            if (currentMove == 1 || currentAction == 3)
+            {
+                if(!dialogBox.moveTexts[currentMove - 1].text.Equals("-"))
+                    currentMove--;
+            }
+        }
+
+        dialogBox.UpdateMoveSelection(currentMove, playerUnit.Pokemon.LearntMoves[currentMove]);
+
+        if (Input.GetKeyDown(KeyCode.X))
+        {
+            PlayerAction();
+        } else if (Input.GetKeyDown(KeyCode.Z))
+        {
+            dialogBox.EnableMoveSelector(false);
+
+            dialogBox.EnableDialogText(true);
+
+            StartCoroutine(PerformPlayerMove());
+        }
+
+
+
+    }
+
+    private IEnumerator PerformPlayerMove()
+    {
+        if (crActive)
+        {
+            StopCoroutine(actionRoutine);
+            crActive = false;
+        }
+
+        state = BattleState.Busy;
+
+        Move move = playerUnit.Pokemon.LearntMoves[currentMove];
+
+        yield return CoroutineTypeText($"{playerUnit.BasePokemon.Name} ha usado {move.Name}.");
+
+        yield return new WaitForSeconds(1f);
+        
+        if (move.DamageClass.Equals("status"))
+        {
+            yield return EnemyMove();
+        }
+        else
+        {
+            bool fainted = enemyUnit.Pokemon.TakeDamage(move, playerUnit.Pokemon);
+
+            yield return enemyHud.UpdateHP();
+
+            if (fainted)
+            {
+                yield return CoroutineTypeText($"{enemyUnit.BasePokemon.Name} se ha debilitado.");
+            }
+            else
+            {
+                yield return EnemyMove();
             }
         }
     }
 
+    private IEnumerator EnemyMove()
+    {
+        state = BattleState.EnemyMove;
+
+        Move move = enemyUnit.Pokemon.GetRandomMove();
+
+        yield return CoroutineTypeText($"{enemyUnit.BasePokemon.Name} ha usado {move.Name}.");
+
+        yield return new WaitForSeconds(1f);
+
+        if (move.DamageClass.Equals("status"))
+        {
+            PlayerAction();
+        } else
+        {
+            bool fainted = playerUnit.Pokemon.TakeDamage(move, enemyUnit.Pokemon);
+
+            yield return playerHud.UpdateHP();
+
+            if (fainted)
+            {
+                yield return CoroutineTypeText($"{playerUnit.BasePokemon.Name} se ha debilitado.");
+            }
+            else
+            {
+                PlayerAction();
+            }
+        }
+    }
 
 }

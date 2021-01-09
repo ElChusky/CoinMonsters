@@ -14,7 +14,7 @@ public class BattleDialogBox : MonoBehaviour
     public GameObject moveDetails;
 
     public List<Text> actionTexts;
-    public List<Text> moveTexts;
+    public Text[] moveTexts = new Text[4];
 
     public Text ppText;
     public Text typeText;
@@ -62,6 +62,20 @@ public class BattleDialogBox : MonoBehaviour
                 actionTexts[i].color = Color.black;
             }
         }
+    }
+
+    public void UpdateMoveSelection(int selectedMove, Move move)
+    {
+        for (int i = 0; i < moveTexts.Length; i++)
+        {
+            if (i == selectedMove)
+                moveTexts[i].color = highlightedColor;
+            else
+                moveTexts[i].color = Color.black;
+        }
+
+        ppText.text = $"PP {move.CurrentPP}/{move.BasePp}";
+        typeText.text = move.Type.ToString();
     }
 
     public void SetMoveNames(Move[] learnedMoves)

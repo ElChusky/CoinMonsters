@@ -194,7 +194,7 @@ public static class PokeApiController
 
                         int accuracy = move["accuracy"];
                         string damageClass = move["damage_class"]["name"];
-                        int power = move["power"];
+                        int? power = move["power"];
                         int pp = move["pp"];
                         string tempType = move["type"]["name"];
                         PokemonType type = PokemonType.None;
@@ -280,8 +280,18 @@ public static class PokeApiController
                                 break;
                             }
                         }
+
+                        //We check if power is null (since status moves have null power) and if so, change it to 0
+                        int finalPower;
+                        if(power == null)
+                        {
+                            finalPower = 0;
+                        } else
+                        {
+                            finalPower = (int)power;
+                        }
                         //Finally, we create the move and add it to the temporal dictionary that we will return
-                        learnableMove = new Move(name, description, type, power, accuracy, pp, damageClass);
+                        learnableMove = new Move(name, description, type, finalPower, accuracy, pp, damageClass);
 
                         moves.Add(new Tuple<int, Move>(learnedAt, learnableMove));
                         break;
