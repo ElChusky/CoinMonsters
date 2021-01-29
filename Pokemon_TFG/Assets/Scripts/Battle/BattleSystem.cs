@@ -50,8 +50,6 @@ public class BattleSystem : MonoBehaviour
 
         yield return CoroutineTypeText("Ha aparecido un " + enemyUnit.Pokemon.BasePoke.Name + " salvaje.");
 
-        yield return new WaitForSeconds(1f);
-
         PlayerAction();
     }
 
@@ -92,6 +90,25 @@ public class BattleSystem : MonoBehaviour
         } else if(state == BattleState.PlayerMove)
         {
             HandleMoveSelection();
+        }
+    }
+
+    private IEnumerator ShowDamageDetails(DamageDetails damageDetails, BattleUnit pokemon)
+    {
+
+        if (damageDetails.Critical > 1f)
+        {
+            yield return CoroutineTypeText("¡Un golpe crítico!");
+        }
+        if(damageDetails.TypeEffectiveness > 1)
+        {
+            yield return CoroutineTypeText("¡Es muy eficaz!");
+        } else if(damageDetails.TypeEffectiveness < 1 && damageDetails.TypeEffectiveness > 0)
+        {
+            yield return CoroutineTypeText("No es muy eficaz...");
+        } else if(damageDetails.TypeEffectiveness == 0f)
+        {
+            yield return CoroutineTypeText($"No afecta al {pokemon.BasePokemon.Name} enemigo.");
         }
     }
 
@@ -190,8 +207,6 @@ public class BattleSystem : MonoBehaviour
             StartCoroutine(PerformPlayerMove());
         }
 
-
-
     }
 
     private IEnumerator PerformPlayerMove()
@@ -206,9 +221,7 @@ public class BattleSystem : MonoBehaviour
 
         Move move = playerUnit.Pokemon.LearntMoves[currentMove];
 
-        yield return CoroutineTypeText($"{playerUnit.BasePokemon.Name} ha usado {move.Name}.");
-
-        yield return new WaitForSeconds(1f);
+        yield return CoroutineTypeText($"¡{playerUnit.BasePokemon.Name} usó {move.Name}!");
         
         if (move.DamageClass.Equals("status"))
         {
@@ -216,13 +229,15 @@ public class BattleSystem : MonoBehaviour
         }
         else
         {
-            bool fainted = enemyUnit.Pokemon.TakeDamage(move, playerUnit.Pokemon);
+            DamageDetails damageDetails = enemyUnit.Pokemon.TakeDamage(move, playerUnit.Pokemon);
 
             yield return enemyHud.UpdateHP();
 
-            if (fainted)
+            yield return ShowDamageDetails(damageDetails, enemyUnit);
+
+            if (damageDetails.Fainted)
             {
-                yield return CoroutineTypeText($"{enemyUnit.BasePokemon.Name} se ha debilitado.");
+                yield return CoroutineTypeText($"¡El {enemyUnit.BasePokemon.Name} salvaje se debilitó!");
             }
             else
             {
@@ -237,22 +252,22 @@ public class BattleSystem : MonoBehaviour
 
         Move move = enemyUnit.Pokemon.GetRandomMove();
 
-        yield return CoroutineTypeText($"{enemyUnit.BasePokemon.Name} ha usado {move.Name}.");
-
-        yield return new WaitForSeconds(1f);
+        yield return CoroutineTypeText($"¡ El {enemyUnit.BasePokemon.Name} salvaje usó {move.Name}!");
 
         if (move.DamageClass.Equals("status"))
         {
             PlayerAction();
         } else
         {
-            bool fainted = playerUnit.Pokemon.TakeDamage(move, enemyUnit.Pokemon);
+            DamageDetails damageDetails = playerUnit.Pokemon.TakeDamage(move, enemyUnit.Pokemon);
 
             yield return playerHud.UpdateHP();
 
-            if (fainted)
+            yield return ShowDamageDetails(damageDetails, playerUnit);
+
+            if (damageDetails.Fainted)
             {
-                yield return CoroutineTypeText($"{playerUnit.BasePokemon.Name} se ha debilitado.");
+                yield return CoroutineTypeText($"¡{playerUnit.BasePokemon.Name} se debilitó!");
             }
             else
             {

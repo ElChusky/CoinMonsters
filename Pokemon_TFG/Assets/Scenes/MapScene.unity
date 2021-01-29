@@ -109567,7 +109567,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   battleLoader: {fileID: 1459423772}
-  walkSpeed: 2.5
+  walkSpeed: 5
   isMoving: 0
   isAllowedToMove: 1
   heldPokemons: []

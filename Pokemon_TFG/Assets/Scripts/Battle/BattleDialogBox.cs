@@ -32,6 +32,7 @@ public class BattleDialogBox : MonoBehaviour
             dialogText.text += dialog.ToCharArray()[i];
             yield return new WaitForSeconds(1f / charsPerSecond);
         }
+        yield return new WaitForSeconds(1f);
     }
 
     public void EnableDialogText(bool enabled)

@@ -6,9 +6,9 @@ using UnityEngine.UI;
 public class HP_Bar_Control : MonoBehaviour
 {
     public bool isPlayerBar;
-    private Color green = new Color(31f / 255, 255f / 255, 30f / 255);
-    private Color yellow = new Color(255f / 255, 255f / 255, 30f / 255);
-    private Color red = new Color(255f / 255, 30f / 255, 30f / 255);
+    private Color green = new Color(31f / 255, 190f / 255, 30f / 255);
+    private Color yellow = new Color(255f / 255, 222f / 255, 30f / 255);
+    private Color red = new Color(248f / 255, 72f / 255, 56f / 255);
 
     private void Update()
     { 

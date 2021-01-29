@@ -26,6 +26,7 @@ public class BattleUnit : MonoBehaviour
             List<Tuple<int, Move>> moves = new List<Tuple<int, Move>>();
             moves.Add(new Tuple<int, Move>(1, new Move("Arañazo", "sadasdasddddddd", PokemonType.Normal, 40, 100, 35, "physical")));
             moves.Add(new Tuple<int, Move>(1, new Move("Malicioso", "sadasdasddddddd", PokemonType.Normal, 0, 100, 30, "status")));
+            moves.Add(new Tuple<int, Move>(1, new Move("Ascuas", "sadasdasddddddd", PokemonType.Fire, 40, 100, 25, "special")));
             Sprite frontSprite = PokeApiController.LoadNewSprite(Application.dataPath + "/Game/Resources/Pokemons/" + 390 + ".png");
             Sprite backSprite = PokeApiController.LoadNewSprite(Application.dataPath + "/Game/Resources/Pokemons/back/" + 390 + ".png");
             BasePokemon = new BasePokemon("Chimchar", 390, frontSprite, backSprite, PokemonType.Fire, PokemonType.None, 44, 58, 44, 58, 44, 61, moves);

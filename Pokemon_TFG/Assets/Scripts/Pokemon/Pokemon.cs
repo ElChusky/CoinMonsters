@@ -242,11 +242,29 @@ public class Pokemon
         return damageClass;
     }
 
-    public bool TakeDamage(Move move, Pokemon attacker)
+    public DamageDetails TakeDamage(Move move, Pokemon attacker)
     {
-        float modifiers = UnityEngine.Random.Range(0.85f, 1f);
+        float criticalHit = 1f;
+
+        if(UnityEngine.Random.value * 100 <= 6.25f)
+        {
+            criticalHit = 2f;
+        }
+
+        float typeMultiplier = TypeChart.GetEffectiveness(move.Type, this);
+
+        DamageDetails damageDetails = new DamageDetails()
+        {
+            TypeEffectiveness = typeMultiplier,
+            Critical = criticalHit,
+            Fainted = false
+        };
+
+        float modifiers = UnityEngine.Random.Range(0.85f, 1f) * typeMultiplier * criticalHit;
+
         float a = (2 * attacker.Level + 10) / 250f;
         float d = a * move.Power * ((float)attacker.Attack / Defense) + 2;
+
         int damage = Mathf.FloorToInt(d * modifiers);
 
         CurrentHP -= damage;
@@ -254,9 +272,10 @@ public class Pokemon
         if(currentHP <= 0)
         {
             currentHP = 0;
-            return true;
+            damageDetails.Fainted = true;
+
         }
-        return false;
+        return damageDetails;
     }
 
     public Move GetRandomMove()
@@ -268,4 +287,11 @@ public class Pokemon
         } while (learntMoves[moveIndex] == null);
         return learntMoves[moveIndex];
     }
+}
+
+public class DamageDetails
+{
+    public bool Fainted { get; set; }
+    public float Critical { get; set; }
+    public float TypeEffectiveness { get; set; }
 }
