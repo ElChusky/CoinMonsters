@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d19d758740d6a74296fc0ff16d98d10, type: 3}
+  m_Name: Monster1
+  m_EditorClassIdentifier: 
+  name: Empig
+  id: 390
+  sprite: {fileID: 21300000, guid: 58c3f3cb32192c6489a65d44d8e6247a, type: 3}
+  type1: 2
+  type2: 0
+  maxHp: 44
+  attack: 58
+  defense: 44
+  spAttack: 38
+  spDefense: 44
+  speed: 61
+  learnableMoves:
+  - move: {fileID: 11400000, guid: 28965924cd8ce3f49816968c2f731911, type: 2}
+    level: 1
+  - move: {fileID: 11400000, guid: 367e12a6b4c712343af7c3931b2c54b9, type: 2}
+    level: 1
+  - move: {fileID: 11400000, guid: 0cd74758c89a9aa4288222e8dea31669, type: 2}
+    level: 7

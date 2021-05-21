@@ -1,43 +1,55 @@
 fileFormatVersion: 2
-guid: 0d3ecaa3c28fbc649a4ad1dd07733364
+guid: 635e102b0bed6db48b6064c50aa08805
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -8577584874179409588
+      213: 5424168485340738860
     second: DownWalk_0
   - first:
-      213: 8003345805657524100
+      213: -449823411460739260
     second: DownWalk_1
   - first:
-      213: -9183283845181319224
+      213: -2483763650388390778
+    second: Prueba 1_2
+  - first:
+      213: -3234833718390784410
     second: DownWalk_2
   - first:
-      213: -4071746895096795892
-    second: RightWalk_0
-  - first:
-      213: 7750794969570194929
-    second: RightWalk_1
-  - first:
-      213: 5296824926242596393
-    second: RightWalk_2
-  - first:
-      213: -5156005640084959279
-    second: UpWalk_0
-  - first:
-      213: 3738174739851104583
-    second: UpWalk_1
-  - first:
-      213: -7446389542164327085
-    second: UpWalk_2
-  - first:
-      213: 2608495052738538761
+      213: -2440981207489300648
     second: LeftWalk_0
   - first:
-      213: 4898441749451907618
+      213: 541832864443024237
     second: LeftWalk_1
   - first:
-      213: -7106920267993759583
+      213: -7967528261374166190
+    second: Prueba 1_6
+  - first:
+      213: 8183351085115778821
     second: LeftWalk_2
+  - first:
+      213: 6814656805278525418
+    second: RightWalk_0
+  - first:
+      213: 2789202158923835195
+    second: RightWalk_1
+  - first:
+      213: -7965948895251387513
+    second: Prueba 1_10
+  - first:
+      213: -8074413112697036883
+    second: RightWalk_2
+  - first:
+      213: 5507965186177686982
+    second: UpWalk_0
+  - first:
+      213: 905548362924770915
+    second: UpWalk_1
+  - first:
+      213: -6818728365710252684
+    second: Prueba 1_14
+  - first:
+      213: 2069658571597065460
+    second: UpWalk_2
   externalObjects: {}
   serializedVersion: 11
   mipmaps:
@@ -119,18 +131,6 @@ TextureImporter:
     overridden: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 3
-    buildTarget: WebGL
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 0
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
@@ -138,10 +138,10 @@ TextureImporter:
       name: DownWalk_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 17
-        height: 25
+        x: 15
+        y: 194
+        width: 34
+        height: 50
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -149,8 +149,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: c49c5cfb00c46f880800000000000000
-      internalID: -8577584874179409588
+      spriteID: c257a9abf74864b40800000000000000
+      internalID: 5424168485340738860
       vertices: []
       indices: 
       edges: []
@@ -159,10 +159,10 @@ TextureImporter:
       name: DownWalk_1
       rect:
         serializedVersion: 2
-        x: 17
-        y: 0
-        width: 17
-        height: 25
+        x: 79
+        y: 194
+        width: 34
+        height: 50
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -170,8 +170,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 48744d05b98911f60800000000000000
-      internalID: 8003345805657524100
+      spriteID: 44f6a349df7e1c9f0800000000000000
+      internalID: -449823411460739260
       vertices: []
       indices: 
       edges: []
@@ -180,10 +180,10 @@ TextureImporter:
       name: DownWalk_2
       rect:
         serializedVersion: 2
-        x: 34
-        y: 0
-        width: 17
-        height: 25
+        x: 207
+        y: 194
+        width: 34
+        height: 50
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -191,134 +191,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 8c752687ffb6e8080800000000000000
-      internalID: -9183283845181319224
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: RightWalk_0
-      rect:
-        serializedVersion: 2
-        x: 51
-        y: 0
-        width: 17
-        height: 25
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: c0da47e95cf3e77c0800000000000000
-      internalID: -4071746895096795892
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: RightWalk_1
-      rect:
-        serializedVersion: 2
-        x: 68
-        y: 0
-        width: 17
-        height: 25
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 1f5bd1895fa509b60800000000000000
-      internalID: 7750794969570194929
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: RightWalk_2
-      rect:
-        serializedVersion: 2
-        x: 85
-        y: 0
-        width: 17
-        height: 25
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 926ef16e43a128940800000000000000
-      internalID: 5296824926242596393
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: UpWalk_0
-      rect:
-        serializedVersion: 2
-        x: 102
-        y: 0
-        width: 17
-        height: 25
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 1df43d220303278b0800000000000000
-      internalID: -5156005640084959279
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: UpWalk_1
-      rect:
-        serializedVersion: 2
-        x: 119
-        y: 0
-        width: 17
-        height: 25
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 741d925ce1aa0e330800000000000000
-      internalID: 3738174739851104583
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: UpWalk_2
-      rect:
-        serializedVersion: 2
-        x: 136
-        y: 0
-        width: 17
-        height: 25
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 3559c100a2c19a890800000000000000
-      internalID: -7446389542164327085
+      spriteID: 66e7cdb3fdf8b13d0800000000000000
+      internalID: -3234833718390784410
       vertices: []
       indices: 
       edges: []
@@ -327,10 +201,10 @@ TextureImporter:
       name: LeftWalk_0
       rect:
         serializedVersion: 2
-        x: 153
-        y: 0
-        width: 17
-        height: 25
+        x: 15
+        y: 130
+        width: 34
+        height: 50
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -338,8 +212,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 90d28d81e6c333420800000000000000
-      internalID: 2608495052738538761
+      spriteID: 85732305684ef1ed0800000000000000
+      internalID: -2440981207489300648
       vertices: []
       indices: 
       edges: []
@@ -348,10 +222,10 @@ TextureImporter:
       name: LeftWalk_1
       rect:
         serializedVersion: 2
-        x: 170
-        y: 0
-        width: 17
-        height: 25
+        x: 79
+        y: 130
+        width: 34
+        height: 50
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -359,8 +233,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 222260d61d2caf340800000000000000
-      internalID: 4898441749451907618
+      spriteID: d6342c49e1af48700800000000000000
+      internalID: 541832864443024237
       vertices: []
       indices: 
       edges: []
@@ -369,10 +243,10 @@ TextureImporter:
       name: LeftWalk_2
       rect:
         serializedVersion: 2
-        x: 187
-        y: 0
-        width: 17
-        height: 25
+        x: 207
+        y: 130
+        width: 34
+        height: 50
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -380,8 +254,134 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 1a0453b9ba52f5d90800000000000000
-      internalID: -7106920267993759583
+      spriteID: 50722a4647a119170800000000000000
+      internalID: 8183351085115778821
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RightWalk_0
+      rect:
+        serializedVersion: 2
+        x: 17
+        y: 66
+        width: 34
+        height: 50
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ae723d04246829e50800000000000000
+      internalID: 6814656805278525418
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RightWalk_1
+      rect:
+        serializedVersion: 2
+        x: 81
+        y: 66
+        width: 34
+        height: 50
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b376861f59c35b620800000000000000
+      internalID: 2789202158923835195
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RightWalk_2
+      rect:
+        serializedVersion: 2
+        x: 209
+        y: 66
+        width: 34
+        height: 50
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: dafdfe7dd0ce1ff80800000000000000
+      internalID: -8074413112697036883
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UpWalk_0
+      rect:
+        serializedVersion: 2
+        x: 15
+        y: 2
+        width: 34
+        height: 50
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6cdd6558729307c40800000000000000
+      internalID: 5507965186177686982
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UpWalk_1
+      rect:
+        serializedVersion: 2
+        x: 79
+        y: 2
+        width: 34
+        height: 50
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 36641133077219c00800000000000000
+      internalID: 905548362924770915
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UpWalk_2
+      rect:
+        serializedVersion: 2
+        x: 207
+        y: 2
+        width: 34
+        height: 50
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4fca26e5187e8bc10800000000000000
+      internalID: 2069658571597065460
       vertices: []
       indices: 
       edges: []
