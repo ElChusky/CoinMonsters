@@ -9,6 +9,12 @@ public class BattleHud : MonoBehaviour
     public Text monsterLevel;
     public Text currentHP;
     public Text maxHP;
+    public Image statusImage;
+    public Sprite burnSprite;
+    public Sprite poisonSprite;
+    public Sprite paralSprite;
+    public Sprite freezeSprite;
+    public Sprite sleepSprite;
     public HP_Bar_Control hpBar;
     public bool isPlayer;
 
@@ -26,6 +32,40 @@ public class BattleHud : MonoBehaviour
             currentHP.text = monster.CurrentHP.ToString();
             maxHP.text = monster.MaxHp.ToString();
         }
+
+        SetStatusImage();
+
+        monster.OnStatusChanged += SetStatusImage;
+    }
+
+    public void SetStatusImage()
+    {
+        if(monster.Status == null)
+        {
+            statusImage.gameObject.SetActive(false);
+        }
+        else{
+            ConditionID id = monster.Status.ID;
+            switch (id)
+            {
+                case ConditionID.brn:
+                    statusImage.sprite = burnSprite;
+                    break;
+                case ConditionID.psn:
+                    statusImage.sprite = poisonSprite;
+                    break;
+                case ConditionID.par:
+                    statusImage.sprite = paralSprite;
+                    break;
+                case ConditionID.frz:
+                    statusImage.sprite = freezeSprite;
+                    break;
+                case ConditionID.slp:
+                    statusImage.sprite = sleepSprite;
+                    break;
+            }
+            statusImage.gameObject.SetActive(true);
+        }
     }
 
     public IEnumerator UpdateHP()
@@ -36,7 +76,12 @@ public class BattleHud : MonoBehaviour
             maxHP.text = monster.MaxHp.ToString();
         }
 
-        yield return hpBar.SetHPSmoothly((float)monster.CurrentHP / monster.MaxHp);
+        if (monster.HpChanged)
+        {
+            yield return hpBar.SetHPSmoothly((float)monster.CurrentHP / monster.MaxHp);
+            monster.HpChanged = false;
+        }
+
 
     }
 }

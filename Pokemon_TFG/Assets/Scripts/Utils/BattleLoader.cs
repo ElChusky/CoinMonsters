@@ -6,28 +6,30 @@ using UnityEngine.SceneManagement;
 public class BattleLoader : MonoBehaviour
 {
 
-    Scene currentScene;
+    int currentSceneIndex;
+    public bool onBattle;
 
     public void LoadBattle()
     {
-        currentScene = SceneManager.GetActiveScene();
+        onBattle = true;
+        currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
         StartCoroutine(LoadBattleAsync(1));
     }
 
-    public IEnumerator LoadBattleAsync(int sceneIndex)
+    private IEnumerator LoadBattleAsync(int sceneIndex)
     {
-
-        yield return SceneManager.SetActiveScene(SceneManager.GetSceneAt(sceneIndex));
+        yield return SceneManager.LoadSceneAsync(sceneIndex);
     }
 
     public void EndBattle()
     {
-        StartCoroutine(EndBattleAsynchronously(currentScene));
+        StartCoroutine(EndBattleAsync(currentSceneIndex));
     }
 
-    public IEnumerator EndBattleAsynchronously(Scene initialScene)
+    private IEnumerator EndBattleAsync(int index)
     {
-        yield return SceneManager.SetActiveScene(initialScene);
+        yield return SceneManager.LoadSceneAsync(index);
+        onBattle = false;
     }
 
 }

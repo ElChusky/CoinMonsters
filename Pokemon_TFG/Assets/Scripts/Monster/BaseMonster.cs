@@ -46,7 +46,14 @@ public class BaseMonster : ScriptableObject
         Defense,
         SpAttack,
         SpDefense,
-        Speed
+        Speed,
+
+        //Not a boostable stat, but attacks that restore HP will be here
+        HP,
+
+        //Not actual stats, but buffs or debuffs for moveAccuracy
+        Accuracy,
+        Evasion
     }
 
     public string Name { get => name; set => name = value; }

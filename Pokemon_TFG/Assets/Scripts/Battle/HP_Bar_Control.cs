@@ -36,12 +36,24 @@ public class HP_Bar_Control : MonoBehaviour
 
         float changeAmt = currentHP - newHP;
 
-        while(currentHP - newHP > Mathf.Epsilon)
+        if(changeAmt > 0)
         {
-            currentHP -= changeAmt * Time.deltaTime;
-            transform.localScale = new Vector3(currentHP, 1f);
-            yield return null;
+            while (currentHP - newHP > Mathf.Epsilon)
+            {
+                currentHP -= changeAmt * Time.deltaTime;
+                transform.localScale = new Vector3(currentHP, 1f);
+                yield return null;
+            }
+        } else
+        {
+            while (currentHP - newHP < Mathf.Epsilon)
+            {
+                currentHP -= changeAmt * Time.deltaTime;
+                transform.localScale = new Vector3(currentHP, 1f);
+                yield return null;
+            }
         }
+        
         transform.localScale = new Vector3(newHP, 1f);
     }
 }

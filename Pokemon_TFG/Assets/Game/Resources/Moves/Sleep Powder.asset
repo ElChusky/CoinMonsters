@@ -10,24 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2e634c1c9d6696144a9e89febc788b36, type: 3}
-  m_Name: Ember
+  m_Name: Sleep Powder
   m_EditorClassIdentifier: 
-  name: Ascuas
-  description: Ascuas que queman
-  type: 2
-  power: 40
-  accuracy: 100
-  alwaysHit: 0
-  basePP: 25
-  moveCategory: 1
+  name: "Somn\xEDfero"
+  description: Esparce polvo que puede dormir al objetivo.
+  type: 5
+  power: 0
+  accuracy: 75
+  basePP: 15
+  moveCategory: 2
   moveEffects:
     boosts: []
-    status: 0
-    volatileStatus: 0
-  secondaryEffects:
-  - boosts: []
-    status: 2
-    volatileStatus: 0
-    chance: 100
-    target: 0
+    status: 3
   target: 0

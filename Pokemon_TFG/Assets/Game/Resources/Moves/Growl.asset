@@ -19,3 +19,8 @@ MonoBehaviour:
   accuracy: 100
   basePP: 40
   moveCategory: 2
+  moveEffects:
+    boosts:
+    - stat: 0
+      boost: -1
+  target: 0

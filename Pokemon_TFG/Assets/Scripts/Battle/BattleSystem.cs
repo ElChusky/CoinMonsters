@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static BaseMonster;
 
 public class BattleSystem : MonoBehaviour
 {
@@ -20,6 +21,7 @@ public class BattleSystem : MonoBehaviour
     private int currentMember;
 
     private bool crActive = false;
+    private bool playerFaster;
 
     private Coroutine actionRoutine;
 
@@ -42,13 +44,8 @@ public class BattleSystem : MonoBehaviour
 
     private void Start()
     {
-        StartBattle(Utils.monsterParty, Utils.wildMonster);
-    }
-
-    public void StartBattle(MonsterParty playerParty, Monster wildMonster)
-    {
-        this.playerParty = playerParty;
-        this.wildMonster = wildMonster;
+        this.playerParty = Utils.monsterParty;
+        this.wildMonster = Utils.wildMonster;
         StartCoroutine(SetupBattle());
     }
 
@@ -79,12 +76,22 @@ public class BattleSystem : MonoBehaviour
 
         yield return CoroutineTypeText("Ha aparecido un " + enemyUnit.Monster.BaseMonster.Name + " salvaje.");
 
+        ChooseFirstTurn();
         ActionSelection();
+    }
+
+    private void ChooseFirstTurn()
+    {
+        if (playerUnit.Monster.Speed >= enemyUnit.Monster.Speed)
+            playerFaster = true;
+        else
+            playerFaster = false;
     }
 
     private void BattleOver()
     {
         state = BattleState.BattleOver;
+        playerParty.Monsters.ForEach(m => m.OnBattleOver());
         battleLoader.EndBattle();
     }
 
@@ -170,6 +177,7 @@ public class BattleSystem : MonoBehaviour
 
                 case 3:
                     //Run
+                    battleLoader.EndBattle();
                     break;
             }
         }
@@ -222,13 +230,17 @@ public class BattleSystem : MonoBehaviour
 
             dialogBox.EnableDialogText(true);
 
-            StartCoroutine(PlayerMove());
+            if (playerFaster)
+                StartCoroutine(PlayerMove());
+            else
+                StartCoroutine(EnemyMove(false));
         }
 
     }
 
     private void HandlePartyScreenSelection()
     {
+        dialogBox.EnableActionSelector(false);
         if (Input.GetKeyDown(KeyCode.DownArrow))
         {
             currentMember += 2;
@@ -269,6 +281,7 @@ public class BattleSystem : MonoBehaviour
             StartCoroutine(SwitchMonster(selectedMonster));
         } else if (Input.GetKeyDown(KeyCode.X))
         {
+            dialogBox.EnableActionSelector(true);
             partyScreen.gameObject.SetActive(false);
             ActionSelection();
         }
@@ -276,9 +289,16 @@ public class BattleSystem : MonoBehaviour
 
     IEnumerator SwitchMonster(Monster newMonster)
     {
-        yield return dialogBox.TypeDialog($"¡{playerUnit.Monster.BaseMonster.Name}, vuelve aquí!");
-        playerUnit.PlayFaintAnimation();
-        yield return new WaitForSeconds(1f);
+        bool fainted = true;
+        if(playerUnit.Monster.CurrentHP > 0)
+        {
+            fainted = false;
+            yield return CoroutineTypeText($"¡{playerUnit.Monster.BaseMonster.Name}, vuelve aquí!");
+            playerUnit.PlayFaintAnimation();
+            yield return new WaitForSeconds(1f);
+        }
+
+        playerUnit.Monster.ResetStatBoosts();
 
         playerUnit.Setup(newMonster);
 
@@ -286,7 +306,17 @@ public class BattleSystem : MonoBehaviour
 
         yield return CoroutineTypeText("¡Adelante " + newMonster.BaseMonster.Name + "!");
 
-        StartCoroutine(EnemyMove());
+        ChooseFirstTurn();
+
+        if(!fainted)
+        {
+            StartCoroutine(EnemyMove(true));
+        }
+        else
+        {
+            ActionSelection();
+        }
+
     }
 
     private IEnumerator ShowDamageDetails(DamageDetails damageDetails, BattleUnit pokemon)
@@ -323,11 +353,16 @@ public class BattleSystem : MonoBehaviour
         yield return RunMove(playerUnit, enemyUnit, move);
         
         if(state == BattleState.PerformMove)
-            yield return EnemyMove();
+        {
+            if (playerFaster)
+                yield return EnemyMove(true);
+            else
+                ActionSelection();
+        }
 
     }
 
-    private IEnumerator EnemyMove()
+    private IEnumerator EnemyMove(bool playerAttackedAlready)
     {
         state = BattleState.PerformMove;
 
@@ -336,38 +371,164 @@ public class BattleSystem : MonoBehaviour
         yield return RunMove(enemyUnit, playerUnit, move);
 
         if(state == BattleState.PerformMove)
-            ActionSelection();
+        {
+            if (playerFaster || (!playerFaster && playerAttackedAlready))
+                ActionSelection();
+            else if(!playerFaster && !playerAttackedAlready)
+                yield return PlayerMove();
+        }
     }
 
     private IEnumerator RunMove(BattleUnit sourceUnit, BattleUnit targetUnit, Move move)
     {
+        //If Monster cant move due to a status condition, it wont execute the rest of code
+        int hpBeforeDamagedByStatus = sourceUnit.Monster.CurrentHP;
+        bool canMove = sourceUnit.Monster.OnBeforeMove(sourceUnit);
+        int hpAfterDamagedByStatus = sourceUnit.Monster.CurrentHP;
+
+        if (!canMove)
+        {
+            yield return ShowStatusChanges(sourceUnit.Monster);
+            if(hpBeforeDamagedByStatus > hpAfterDamagedByStatus)
+                sourceUnit.PlayHitAnimation();
+            yield return sourceUnit.hud.UpdateHP();
+            yield break;
+        }
+        
+        yield return ShowStatusChanges(sourceUnit.Monster);
+
         if (sourceUnit.isPlayerUnit)
             yield return CoroutineTypeText($"¡{sourceUnit.BaseMonster.Name} usó {move.Name}!");
         else
             yield return CoroutineTypeText($"¡El {sourceUnit.BaseMonster.Name} enemigo usó {move.Name}!");
 
-        sourceUnit.PlayAttackAnimation();
-        yield return new WaitForSeconds(1f);
-
-        move.CurrentPP--;
-
-        targetUnit.PlayHitAnimation();
-
-        DamageDetails damageDetails = targetUnit.Monster.TakeDamage(move, sourceUnit.Monster);
-        yield return targetUnit.hud.UpdateHP();
-
-        yield return ShowDamageDetails(damageDetails, targetUnit);
-
-        if (damageDetails.Fainted)
+        if (CheckIfMoveHits(move, sourceUnit.Monster, targetUnit.Monster))
         {
-            targetUnit.PlayFaintAnimation();
+            sourceUnit.PlayAttackAnimation();
+            yield return new WaitForSeconds(1f);
 
-            if (targetUnit.isPlayerUnit)
-                yield return CoroutineTypeText($"¡{targetUnit.BaseMonster.Name} se debilitó!");
+            move.CurrentPP--;
+
+            if (move._MoveCategory == MoveCategory.Status)
+            {
+                yield return RunMoveEffects(move.MoveEffects, sourceUnit, targetUnit, move.Target);
+            }
             else
-                yield return CoroutineTypeText($"¡El {targetUnit.BaseMonster.Name} salvaje se debilitó!");
+            {
+                targetUnit.PlayHitAnimation();
 
-            CheckForBattleOver(targetUnit);
+                DamageDetails damageDetails = targetUnit.Monster.TakeDamage(move, sourceUnit.Monster);
+                yield return targetUnit.hud.UpdateHP();
+                yield return sourceUnit.hud.UpdateHP();
+
+                yield return ShowDamageDetails(damageDetails, targetUnit);
+            }
+
+            if(move.SecondaryEffects != null && move.SecondaryEffects.Count > 0 && targetUnit.Monster.CurrentHP > 0)
+            {
+                foreach (SecondaryEffects secEffects in move.SecondaryEffects)
+                {
+                    if (UnityEngine.Random.Range(1, 101) <= secEffects.Chance)
+                        yield return RunMoveEffects(secEffects, sourceUnit, targetUnit, secEffects.Target);
+                }
+            }
+
+            if (targetUnit.Monster.CurrentHP <= 0)
+            {
+                targetUnit.PlayFaintAnimation();
+
+                if (targetUnit.isPlayerUnit)
+                    yield return CoroutineTypeText($"¡{targetUnit.BaseMonster.Name} se debilitó!");
+                else
+                    yield return CoroutineTypeText($"¡El {targetUnit.BaseMonster.Name} salvaje se debilitó!");
+
+                CheckForBattleOver(targetUnit);
+            }
+        }
+        else
+        {
+            if (sourceUnit.isPlayerUnit)
+                yield return CoroutineTypeText($"El ataque de {sourceUnit.BaseMonster.Name} falló.");
+            else
+                yield return CoroutineTypeText($"El ataque del {sourceUnit.BaseMonster.Name} salvaje falló.");
+        }
+
+        //Statuses like burn or poison will hurt the monster at the end of the turn
+        sourceUnit.Monster.OnAfterTurn(sourceUnit);
+
+        yield return ShowStatusChanges(sourceUnit.Monster);
+        yield return sourceUnit.hud.UpdateHP();
+
+        if (sourceUnit.Monster.CurrentHP <= 0)
+        {
+            sourceUnit.PlayFaintAnimation();
+
+            if (sourceUnit.isPlayerUnit)
+                yield return CoroutineTypeText($"¡{sourceUnit.BaseMonster.Name} se debilitó!");
+            else
+                yield return CoroutineTypeText($"¡El {sourceUnit.BaseMonster.Name} salvaje se debilitó!");
+
+            CheckForBattleOver(sourceUnit);
+        }
+
+    }
+
+    private IEnumerator RunMoveEffects(MoveEffects effects, BattleUnit sourceUnit, BattleUnit targetUnit, MoveTarget target)
+    {
+        //Stat Boosting
+        if (effects.Boosts != null)
+        {
+            sourceUnit.Monster.ApplyBoosts(effects.Boosts, sourceUnit, targetUnit, target);
+        }
+
+        //Status Conditions
+        if(effects.Status != ConditionID.none)
+        {
+            targetUnit.Monster.SetStatus(effects.Status, targetUnit);
+        }
+
+        //VolatileStatus Conditions
+        if (effects.VolatileStatus != ConditionID.none)
+        {
+            targetUnit.Monster.SetVolatileStatus(effects.VolatileStatus, targetUnit);
+        }
+
+        yield return ShowStatusChanges(sourceUnit.Monster);
+        yield return ShowStatusChanges(targetUnit.Monster);
+    }
+
+    private bool CheckIfMoveHits(Move move, Monster sourceMonster, Monster targetMonster)
+    {
+        if (move.AlwaysHit)
+            return true;
+
+        float moveAccuracy = move.Accuracy;
+
+        int accuracy = sourceMonster.StatBoosts[Stat.Accuracy];
+        int evasion = targetMonster.StatBoosts[Stat.Evasion];
+
+
+        float[] boostValues = new float[] { 1f, 4f/3f, 5f/3f, 2f, 7f/3f, 8f/3f, 3f };
+
+        if (accuracy > 0)
+            moveAccuracy *= boostValues[accuracy];
+        else
+            moveAccuracy /= boostValues[-accuracy];
+
+        if (evasion > 0)
+            moveAccuracy /= boostValues[evasion];
+        else
+            moveAccuracy *= boostValues[-evasion];
+
+        return UnityEngine.Random.Range(1, 101) <= moveAccuracy;
+    }
+
+    private IEnumerator ShowStatusChanges(Monster monster)
+    {
+        while(monster.StatusChanges != null && monster.StatusChanges.Count > 0)
+        {
+            string text = monster.StatusChanges.Dequeue();
+            yield return dialogBox.TypeDialog(text);
         }
     }
 
@@ -382,13 +543,8 @@ public class BattleSystem : MonoBehaviour
             }
             else
             {
-                faintedUnit.Setup(nextPoke);
-
-                dialogBox.SetMoveNames(nextPoke.LearntMoves);
-
-                StartCoroutine(CoroutineTypeText("¡Adelante " + nextPoke.BaseMonster.Name + "!"));
-
-                ActionSelection();
+                OpenPartyScreen();
+                
             }
         } else
         {

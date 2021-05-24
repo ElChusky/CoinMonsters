@@ -14,20 +14,24 @@ public class PlayerController : MonoBehaviour
     private Vector2 input;
     public GameObject player;
     public BattleLoader battleLoader;
+    public Camera worldCamera;
 
     public LayerMask buildings;
     public LayerMask longGrass;
 
     private Animator animator;
 
+    
+
     private void Awake()
     {
         animator = GetComponent<Animator>();
+        ConditionsDB.Init();
     }
 
     // Update is called once per frame
     private void Update() {
-        
+
         if (!isMoving && isAllowedToMove)
         {
             isRunning = false;

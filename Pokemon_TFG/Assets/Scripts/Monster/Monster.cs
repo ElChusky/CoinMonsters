@@ -15,6 +15,13 @@ public class Monster
 
     public Dictionary<Stat, int> Stats { get; private set; }
     public Dictionary<Stat, int> StatBoosts { get; private set; }
+    public StatusCondition Status { get; private set; }
+    public int StatusTime { get; set; }
+    public StatusCondition VolatileStatus { get; set; }
+    public int VolatileStatusTime { get; set; }
+    public bool HpChanged { get; set; }
+
+    public event Action OnStatusChanged;
 
     public Monster(BaseMonster baseMonster, int level)
     {
@@ -45,14 +52,10 @@ public class Monster
         CalculateStats();
         currentHP = MaxHp;
 
-        StatBoosts = new Dictionary<Stat, int>()
-        {
-            {Stat.Attack, 0},
-            {Stat.Defense, 0},
-            {Stat.SpAttack, 0},
-            {Stat.SpDefense, 0},
-            {Stat.Speed, 0},
-        };
+        ResetStatBoosts();
+        Status = null;
+        VolatileStatus = null;
+        StatusChanges = new Queue<string>();
     }
 
     private void CalculateStats()
@@ -77,9 +80,73 @@ public class Monster
         if (boost >= 0)
             statValue = Mathf.FloorToInt(statValue * boostValues[boost]);
         else
-            statValue = Mathf.FloorToInt(statValue / boostValues[boost]);
+            statValue = Mathf.FloorToInt(statValue / boostValues[-boost]);
 
         return statValue;
+    }
+
+    public void ResetStatBoosts()
+    {
+        StatBoosts = new Dictionary<Stat, int>()
+        {
+            {Stat.Attack, 0},
+            {Stat.Defense, 0},
+            {Stat.SpAttack, 0},
+            {Stat.SpDefense, 0},
+            {Stat.Speed, 0},
+
+            {Stat.Accuracy, 0},
+            {Stat.Evasion, 0},
+        };
+    }
+
+    public void ApplyBoosts(List<StatBoost> boosts, BattleUnit sourceUnit, BattleUnit targetUnit, MoveTarget target)
+    {
+        foreach (StatBoost statBoost in boosts)
+        {
+            Stat stat = statBoost.stat;
+            int boost = statBoost.boost;
+
+            if (stat == Stat.HP)
+                continue;
+
+            StatBoosts[stat] = Mathf.Clamp(StatBoosts[stat] + boost, -6, 6);
+
+            string text;
+
+            if ((sourceUnit.isPlayerUnit && target == MoveTarget.Foe) || (!sourceUnit.isPlayerUnit && target == MoveTarget.Self))
+                text = $"del {targetUnit.BaseMonster.Name} enemigo";
+            else if(sourceUnit.isPlayerUnit && target == MoveTarget.Self)
+                text = $"de {sourceUnit.BaseMonster.Name}";
+            else
+                text = $"de {targetUnit.BaseMonster.Name}";
+
+            if (statBoost.boost > 0)
+                StatusChanges.Enqueue($"{GetStatusText(statBoost)}" + text + " ha aumentado.");
+            else
+                StatusChanges.Enqueue($"{GetStatusText(statBoost)}" + text + " ha disminuido.");
+
+            Debug.Log($"{stat} ha cambiado a: {StatBoosts[stat]}");
+        }
+    }
+
+    private string GetStatusText(StatBoost statBoost)
+    {
+        Stat statName = statBoost.stat;
+        switch (statName)
+        {
+            case Stat.Attack:
+                return "El ataque ";
+            case Stat.Defense:
+                return "La defensa ";
+            case Stat.SpAttack:
+                return "El ataque especial ";
+            case Stat.SpDefense:
+                return "La defensa especial ";
+            case Stat.Speed:
+                return "La velocidad ";
+        }
+        return "No va a llegar aqui";
     }
 
     #region Stats
@@ -110,6 +177,8 @@ public class Monster
 
     public int MaxHp { get; private set; }
     #endregion
+
+    public Queue<string> StatusChanges { get; private set; }
 
     public BaseMonster BaseMonster { get => baseMonster; set => baseMonster = value; }
     public int Level { get => level; set => level = value; }
@@ -330,15 +399,76 @@ public class Monster
 
         int damage = Mathf.FloorToInt(d * modifiers);
 
-        CurrentHP -= damage;
+        if (CurrentHP < damage)
+            damage = CurrentHP;
 
-        if(currentHP <= 0)
+        UpdateHP(damage);
+
+        if(move.SecondaryEffects != null)
         {
-            currentHP = 0;
-            damageDetails.Fainted = true;
-
+            foreach (SecondaryEffects secEffect in move.SecondaryEffects)
+            {
+                if (secEffect.Boosts != null)
+                {
+                    foreach (StatBoost statBoost in secEffect.Boosts)
+                    {
+                        if (statBoost.stat == Stat.HP)
+                        {
+                            if (damage == 1)
+                                damage++;
+                            attacker.UpdateHP(-damage * statBoost.boost/100);
+                            StatusChanges.Enqueue($"{attacker.BaseMonster.Name} ha recuperado vida.");
+                            break;
+                        }
+                    }
+                    break;
+                }
+            }
         }
+
         return damageDetails;
+    }
+
+    public void UpdateHP(int damage)
+    {
+        currentHP = Mathf.Clamp(CurrentHP - damage, 0, MaxHp);
+        HpChanged = true;
+    }
+
+    public void SetStatus(ConditionID conditionId, BattleUnit monsterUnit)
+    {
+        if (Status != null)
+        {
+            StatusChanges.Enqueue("Pero falló.");
+            return;
+        }
+        Status = ConditionsDB.Conditions[conditionId];
+        Status?.OnStart?.Invoke(monsterUnit);
+        StatusChanges.Enqueue($"{BaseMonster.Name} {Status.StartMessage}");
+        OnStatusChanged?.Invoke();
+    }
+
+    public void CureStatus()
+    {
+        Status = null;
+        OnStatusChanged?.Invoke();
+    }
+
+    public void SetVolatileStatus(ConditionID conditionId, BattleUnit monsterUnit)
+    {
+        if (VolatileStatus != null)
+        {
+            StatusChanges.Enqueue("Pero falló.");
+            return;
+        }
+        VolatileStatus = ConditionsDB.Conditions[conditionId];
+        VolatileStatus?.OnStart?.Invoke(monsterUnit);
+        StatusChanges.Enqueue($"{BaseMonster.Name} {VolatileStatus.StartMessage}");
+    }
+
+    public void CureVolatileStatus()
+    {
+        VolatileStatus = null;
     }
 
     public Move GetRandomMove()
@@ -349,6 +479,36 @@ public class Monster
             moveIndex = UnityEngine.Random.Range(0, learntMoves.Length);
         } while (learntMoves[moveIndex] == null);
         return learntMoves[moveIndex];
+    }
+
+    public void OnAfterTurn(BattleUnit monsterUnit)
+    {
+        Status?.OnAfterTurn?.Invoke(monsterUnit);
+        VolatileStatus?.OnAfterTurn?.Invoke(monsterUnit);
+    }
+
+    public bool OnBeforeMove(BattleUnit monsterUnit)
+    {
+        bool canPerformMove = true;
+        if(Status?.OnBeforeMove != null)
+        {
+            if(!Status.OnBeforeMove(monsterUnit))
+                canPerformMove = false;
+        }
+
+        if (VolatileStatus?.OnBeforeMove != null)
+        {
+            if (!VolatileStatus.OnBeforeMove(monsterUnit))
+                canPerformMove = false;
+        }
+
+        return canPerformMove;
+    }
+
+    public void OnBattleOver()
+    {
+        VolatileStatus = null;
+        ResetStatBoosts();
     }
 }
 

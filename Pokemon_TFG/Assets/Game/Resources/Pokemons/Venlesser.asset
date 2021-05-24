@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d19d758740d6a74296fc0ff16d98d10, type: 3}
+  m_Name: Venlesser
+  m_EditorClassIdentifier: 
+  name: Venlesser
+  id: 300
+  sprite: {fileID: 21300000, guid: 55d0a95b1cbbbdf4197c4ab99980f1b5, type: 3}
+  type1: 10
+  type2: 8
+  maxHp: 40
+  attack: 45
+  defense: 35
+  spAttack: 30
+  spDefense: 40
+  speed: 55
+  learnableMoves:
+  - move: {fileID: 11400000, guid: 6a85759e749780c41a113d4951507c42, type: 2}
+    level: 1
+  - move: {fileID: 11400000, guid: 081bf7a896229c8479e56bd97cb3476f, type: 2}
+    level: 1
+  - move: {fileID: 11400000, guid: f0bf20e27bb307e47a217ca59a1deea8, type: 2}
+    level: 5
