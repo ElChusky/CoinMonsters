@@ -21,6 +21,8 @@ public class Move : ScriptableObject
 
     [SerializeField] int basePP;
 
+    [SerializeField] int priority;
+
     private int currentPP;
 
     [SerializeField] MoveCategory moveCategory;
@@ -53,6 +55,7 @@ public class Move : ScriptableObject
     public int BasePp { get { return basePP; } set => basePP = value; }
     public MoveCategory _MoveCategory { get { return moveCategory; } set => moveCategory = value; }
     public int CurrentPP { get { return currentPP; } set => currentPP = value; }
+    public int Priority { get { return priority; } set => priority = value; }
     public MoveEffects MoveEffects { get { return moveEffects; } }
     public List<SecondaryEffects> SecondaryEffects { get { return secondaryEffects; } }
     public MoveTarget Target { get { return target; } }

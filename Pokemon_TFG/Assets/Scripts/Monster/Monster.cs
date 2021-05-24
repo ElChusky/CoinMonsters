@@ -17,6 +17,7 @@ public class Monster
     public Dictionary<Stat, int> StatBoosts { get; private set; }
     public StatusCondition Status { get; private set; }
     public int StatusTime { get; set; }
+    public Move CurrentMove { get; set; }
     public StatusCondition VolatileStatus { get; set; }
     public int VolatileStatusTime { get; set; }
     public bool HpChanged { get; set; }
@@ -473,12 +474,17 @@ public class Monster
 
     public Move GetRandomMove()
     {
-        int moveIndex = 0;
-        do
+
+        List<Move> movesWithPP = new List<Move>();
+
+        foreach (Move move in learntMoves)
         {
-            moveIndex = UnityEngine.Random.Range(0, learntMoves.Length);
-        } while (learntMoves[moveIndex] == null);
-        return learntMoves[moveIndex];
+            if (move.CurrentPP > 0)
+                movesWithPP.Add(move);
+        }
+
+        int moveIndex = UnityEngine.Random.Range(0, movesWithPP.Count);
+        return movesWithPP[moveIndex];
     }
 
     public void OnAfterTurn(BattleUnit monsterUnit)

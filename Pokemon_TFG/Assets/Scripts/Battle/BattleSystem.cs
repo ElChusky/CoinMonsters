@@ -16,20 +16,17 @@ public class BattleSystem : MonoBehaviour
     private Monster wildMonster;
 
     private BattleState state;
+    private BattleState? previousState;
+
     private int currentAction;
     private int currentMove;
     private int currentMember;
 
-    private bool crActive = false;
-    private bool playerFaster;
-
-    private Coroutine actionRoutine;
-
     private IEnumerator CoroutineTypeText(string text)
     {
-        crActive = true;
         yield return dialogBox.TypeDialog(text);
-        crActive = false;
+        yield return new WaitUntil(() => dialogBox.dialogText.text.Equals(text));
+        yield return new WaitForSeconds(0.5f);
     }
 
     public enum BattleState{
@@ -37,9 +34,17 @@ public class BattleSystem : MonoBehaviour
         ActionSelection, 
         MoveSelection,
         PartyScreen,
-        PerformMove,
+        RunningTurn,
         Busy,
         BattleOver,
+    }
+
+    public enum BattleAction
+    {
+        Move,
+        SwitchMonster,
+        UseItem,
+        Run,
     }
 
     private void Start()
@@ -76,16 +81,7 @@ public class BattleSystem : MonoBehaviour
 
         yield return CoroutineTypeText("Ha aparecido un " + enemyUnit.Monster.BaseMonster.Name + " salvaje.");
 
-        ChooseFirstTurn();
         ActionSelection();
-    }
-
-    private void ChooseFirstTurn()
-    {
-        if (playerUnit.Monster.Speed >= enemyUnit.Monster.Speed)
-            playerFaster = true;
-        else
-            playerFaster = false;
     }
 
     private void BattleOver()
@@ -115,19 +111,13 @@ public class BattleSystem : MonoBehaviour
 
     private void ActionSelection()
     {
-        if(crActive)
-        {
-            StopCoroutine(actionRoutine);
-            crActive = false;
-        }
-
         state = BattleState.ActionSelection;
 
         dialogBox.EnableMoveSelector(false);
         dialogBox.EnableDialogText(true);
         dialogBox.EnableActionSelector(true);
 
-        actionRoutine = StartCoroutine(CoroutineTypeText("¿Que debería hacer " + playerUnit.Monster.BaseMonster.Name + "?"));
+        StartCoroutine(CoroutineTypeText("¿Que debería hacer " + playerUnit.Monster.BaseMonster.Name + "?"));
 
         dialogBox.EnableActionSelector(true);
     }
@@ -172,6 +162,7 @@ public class BattleSystem : MonoBehaviour
 
                 case 2:
                     //Pokemon
+                    previousState = state;
                     OpenPartyScreen();
                     break;
 
@@ -185,6 +176,7 @@ public class BattleSystem : MonoBehaviour
 
     private void HandleMoveSelection()
     {
+        #region Cambiar Movimiento
         if (Input.GetKeyDown(KeyCode.DownArrow))
         {
             if (currentMove < 2)
@@ -217,6 +209,7 @@ public class BattleSystem : MonoBehaviour
                     currentMove--;
             }
         }
+        #endregion
 
         dialogBox.UpdateMoveSelection(currentMove, playerUnit.Monster.LearntMoves[currentMove]);
 
@@ -226,14 +219,16 @@ public class BattleSystem : MonoBehaviour
         }
         else if (Input.GetKeyDown(KeyCode.Z))
         {
+
+            Move move = playerUnit.Monster.LearntMoves[currentMove];
+
+            if (move.CurrentPP == 0) return;
+
             dialogBox.EnableMoveSelector(false);
 
             dialogBox.EnableDialogText(true);
 
-            if (playerFaster)
-                StartCoroutine(PlayerMove());
-            else
-                StartCoroutine(EnemyMove(false));
+            StartCoroutine(RunTurns(BattleAction.Move));
         }
 
     }
@@ -277,8 +272,20 @@ public class BattleSystem : MonoBehaviour
             }
 
             partyScreen.gameObject.SetActive(false);
-            state = BattleState.PerformMove;
-            StartCoroutine(SwitchMonster(selectedMonster));
+
+            //If player chose to switch monsters, he was on ActionSelection state
+            if(previousState == BattleState.ActionSelection)
+            {
+                previousState = null;
+                StartCoroutine(RunTurns(BattleAction.SwitchMonster));
+            }
+            else
+            {
+                state = BattleState.Busy;
+                StartCoroutine(SwitchMonster(selectedMonster));
+            }
+
+
         } else if (Input.GetKeyDown(KeyCode.X))
         {
             dialogBox.EnableActionSelector(true);
@@ -289,10 +296,8 @@ public class BattleSystem : MonoBehaviour
 
     IEnumerator SwitchMonster(Monster newMonster)
     {
-        bool fainted = true;
         if(playerUnit.Monster.CurrentHP > 0)
         {
-            fainted = false;
             yield return CoroutineTypeText($"¡{playerUnit.Monster.BaseMonster.Name}, vuelve aquí!");
             playerUnit.PlayFaintAnimation();
             yield return new WaitForSeconds(1f);
@@ -306,16 +311,7 @@ public class BattleSystem : MonoBehaviour
 
         yield return CoroutineTypeText("¡Adelante " + newMonster.BaseMonster.Name + "!");
 
-        ChooseFirstTurn();
-
-        if(!fainted)
-        {
-            StartCoroutine(EnemyMove(true));
-        }
-        else
-        {
-            ActionSelection();
-        }
+        state = BattleState.RunningTurn;
 
     }
 
@@ -338,45 +334,62 @@ public class BattleSystem : MonoBehaviour
         }
     }
 
-    private IEnumerator PlayerMove()
+    private IEnumerator RunTurns(BattleAction playerAction)
     {
-        if (crActive)
+        state = BattleState.RunningTurn;
+        if(playerAction == BattleAction.Move)
         {
-            StopCoroutine(actionRoutine);
-            crActive = false;
+
+            playerUnit.Monster.CurrentMove = playerUnit.Monster.LearntMoves[currentMove];
+            enemyUnit.Monster.CurrentMove = enemyUnit.Monster.GetRandomMove();
+
+            //Check order
+            int playerMovePriority = playerUnit.Monster.CurrentMove.Priority;
+            int enemyMovePriority = enemyUnit.Monster.CurrentMove.Priority;
+
+            bool playerGoesFirst = true;
+
+            if(enemyMovePriority > playerMovePriority)
+                playerGoesFirst = false;
+            else if(enemyMovePriority == playerMovePriority)
+                playerGoesFirst = playerUnit.Monster.Speed >= enemyUnit.Monster.Speed;
+
+            BattleUnit firstUnit = (playerGoesFirst) ? playerUnit : enemyUnit;
+            BattleUnit secondUnit = (playerGoesFirst) ? enemyUnit : playerUnit;
+
+            Monster secondMonster = secondUnit.Monster;
+
+            //First unit run move
+            yield return RunMove(firstUnit, secondUnit, firstUnit.Monster.CurrentMove);
+            yield return RunAfterTurn(firstUnit);
+            if (state == BattleState.BattleOver) yield break;
+
+            if(secondMonster.CurrentHP > 0)
+            {
+                //Second unit run move
+                yield return RunMove(secondUnit, firstUnit, secondUnit.Monster.CurrentMove);
+                yield return RunAfterTurn(secondUnit);
+                if (state == BattleState.BattleOver) yield break;
+            }
+
+        }
+        else if(playerAction == BattleAction.SwitchMonster)
+        {
+            //Switch Monster
+            Monster selectedMonster = playerParty.Monsters[currentMember];
+            state = BattleState.Busy;
+            yield return SwitchMonster(selectedMonster);
+
+            //Enemy gets turn
+            Move enemyMove = enemyUnit.Monster.GetRandomMove();
+            yield return RunMove(enemyUnit, playerUnit, enemyMove);
+            yield return RunAfterTurn(enemyUnit);
+            if (state == BattleState.BattleOver) yield break;
+
         }
 
-        state = BattleState.PerformMove;
-
-        Move move = playerUnit.Monster.LearntMoves[currentMove];
-
-        yield return RunMove(playerUnit, enemyUnit, move);
-        
-        if(state == BattleState.PerformMove)
-        {
-            if (playerFaster)
-                yield return EnemyMove(true);
-            else
-                ActionSelection();
-        }
-
-    }
-
-    private IEnumerator EnemyMove(bool playerAttackedAlready)
-    {
-        state = BattleState.PerformMove;
-
-        Move move = enemyUnit.Monster.GetRandomMove();
-
-        yield return RunMove(enemyUnit, playerUnit, move);
-
-        if(state == BattleState.PerformMove)
-        {
-            if (playerFaster || (!playerFaster && playerAttackedAlready))
-                ActionSelection();
-            else if(!playerFaster && !playerAttackedAlready)
-                yield return PlayerMove();
-        }
+        if (state != BattleState.BattleOver)
+            ActionSelection();
     }
 
     private IEnumerator RunMove(BattleUnit sourceUnit, BattleUnit targetUnit, Move move)
@@ -406,7 +419,6 @@ public class BattleSystem : MonoBehaviour
         {
             sourceUnit.PlayAttackAnimation();
             yield return new WaitForSeconds(1f);
-
             move.CurrentPP--;
 
             if (move._MoveCategory == MoveCategory.Status)
@@ -451,24 +463,7 @@ public class BattleSystem : MonoBehaviour
                 yield return CoroutineTypeText($"El ataque de {sourceUnit.BaseMonster.Name} falló.");
             else
                 yield return CoroutineTypeText($"El ataque del {sourceUnit.BaseMonster.Name} salvaje falló.");
-        }
 
-        //Statuses like burn or poison will hurt the monster at the end of the turn
-        sourceUnit.Monster.OnAfterTurn(sourceUnit);
-
-        yield return ShowStatusChanges(sourceUnit.Monster);
-        yield return sourceUnit.hud.UpdateHP();
-
-        if (sourceUnit.Monster.CurrentHP <= 0)
-        {
-            sourceUnit.PlayFaintAnimation();
-
-            if (sourceUnit.isPlayerUnit)
-                yield return CoroutineTypeText($"¡{sourceUnit.BaseMonster.Name} se debilitó!");
-            else
-                yield return CoroutineTypeText($"¡El {sourceUnit.BaseMonster.Name} salvaje se debilitó!");
-
-            CheckForBattleOver(sourceUnit);
         }
 
     }
@@ -494,7 +489,34 @@ public class BattleSystem : MonoBehaviour
         }
 
         yield return ShowStatusChanges(sourceUnit.Monster);
+
         yield return ShowStatusChanges(targetUnit.Monster);
+    }
+
+    private IEnumerator RunAfterTurn(BattleUnit sourceUnit)
+    {
+
+        if (state == BattleState.BattleOver) yield break;
+
+        yield return new WaitUntil(() => state == BattleState.RunningTurn);
+
+        //Statuses like burn or poison will hurt the monster at the end of the turn
+        sourceUnit.Monster.OnAfterTurn(sourceUnit);
+
+        yield return ShowStatusChanges(sourceUnit.Monster);
+        yield return sourceUnit.hud.UpdateHP();
+
+        if (sourceUnit.Monster.CurrentHP <= 0)
+        {
+            sourceUnit.PlayFaintAnimation();
+
+            if (sourceUnit.isPlayerUnit)
+                yield return CoroutineTypeText($"¡{sourceUnit.BaseMonster.Name} se debilitó!");
+            else
+                yield return CoroutineTypeText($"¡El {sourceUnit.BaseMonster.Name} salvaje se debilitó!");
+
+            CheckForBattleOver(sourceUnit);
+        }
     }
 
     private bool CheckIfMoveHits(Move move, Monster sourceMonster, Monster targetMonster)
@@ -528,7 +550,7 @@ public class BattleSystem : MonoBehaviour
         while(monster.StatusChanges != null && monster.StatusChanges.Count > 0)
         {
             string text = monster.StatusChanges.Dequeue();
-            yield return dialogBox.TypeDialog(text);
+            yield return CoroutineTypeText(text);
         }
     }
 

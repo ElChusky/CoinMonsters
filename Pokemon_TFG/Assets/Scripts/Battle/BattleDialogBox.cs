@@ -32,7 +32,6 @@ public class BattleDialogBox : MonoBehaviour
             dialogText.text += dialog.ToCharArray()[i];
             yield return new WaitForSeconds(1f / charsPerSecond);
         }
-        yield return new WaitForSeconds(1f);
     }
 
     public void EnableDialogText(bool enabled)
@@ -77,6 +76,11 @@ public class BattleDialogBox : MonoBehaviour
 
         ppText.text = $"PP {move.CurrentPP}/{move.BasePp}";
         typeText.text = move.Type.ToString();
+
+        if (move.CurrentPP == 0)
+            ppText.color = Color.red;
+        else
+            ppText.color = Color.black;
     }
 
     public void SetMoveNames(Move[] learnedMoves)
