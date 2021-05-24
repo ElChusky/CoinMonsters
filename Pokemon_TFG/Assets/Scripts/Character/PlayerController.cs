@@ -11,13 +11,15 @@ public class PlayerController : MonoBehaviour
     public bool isMoving = false;
     public bool isRunning = false;
     public bool isAllowedToMove = true;
+    public bool dialogActive = false;
     private Vector2 input;
     public GameObject player;
     public BattleLoader battleLoader;
     public Camera worldCamera;
 
-    public LayerMask buildings;
-    public LayerMask longGrass;
+    public LayerMask solidObjectsLayer;
+    public LayerMask longGrassLayer;
+    public LayerMask interactableLayer;
 
     private Animator animator;
 
@@ -32,36 +34,56 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     private void Update() {
 
-        if (!isMoving && isAllowedToMove)
+        if (!dialogActive)
         {
-            isRunning = false;
-            input.x = Input.GetAxisRaw("Horizontal");
-            input.y = Input.GetAxisRaw("Vertical");
+            if (!isMoving && isAllowedToMove)
+            {
+                isRunning = false;
+                input.x = Input.GetAxisRaw("Horizontal");
+                input.y = Input.GetAxisRaw("Vertical");
 
-            if(Mathf.Abs(input.x) > Mathf.Abs(input.y))
-            {
-                input.y = 0;
-            }
-            else
-            {
-                input.x = 0;
-            }
-
-            if(input != Vector2.zero)
-            {
-                animator.SetFloat("moveX", input.x);
-                animator.SetFloat("moveY", input.y);
-                Vector3 targetPos = transform.position;
-                targetPos.x += input.x;
-                targetPos.y += input.y;
-                if (IsWalkable(targetPos))
+                if (Mathf.Abs(input.x) > Mathf.Abs(input.y))
                 {
-                    StartCoroutine(MoveTowards(targetPos));
+                    input.y = 0;
+                }
+                else
+                {
+                    input.x = 0;
+                }
+
+                if (input != Vector2.zero)
+                {
+                    animator.SetFloat("moveX", input.x);
+                    animator.SetFloat("moveY", input.y);
+                    Vector3 targetPos = transform.position;
+                    targetPos.x += input.x;
+                    targetPos.y += input.y;
+                    if (IsWalkable(targetPos))
+                    {
+                        StartCoroutine(MoveTowards(targetPos));
+                    }
+                }
+            }
+            animator.SetBool("isMoving", isMoving);
+            animator.SetBool("isRunning", isRunning);
+
+            if (Input.GetKeyDown(KeyCode.Z))
+            {
+                Interact();
+            }
+        }
+        else
+        {
+            if (Input.GetKeyDown(KeyCode.Z))
+            {
+                DialogManager.currentLine++;
+                if(DialogManager.currentLine < DialogManager.dialog.Lines.Count)
+                {
+                    //TypeDialog del DialogManager para continuar dialogo.
                 }
             }
         }
-        animator.SetBool("isMoving", isMoving);
-        animator.SetBool("isRunning", isRunning);
+
     }
     IEnumerator MoveTowards(Vector3 targetPos)
     {
@@ -83,9 +105,25 @@ public class PlayerController : MonoBehaviour
         CheckForEncounters();
     }
 
+    private void Interact()
+    {
+        Vector3 facingDir = new Vector3(animator.GetFloat("moveX"), animator.GetFloat("moveY"));
+        Vector3 interactPos = transform.position + facingDir;
+
+        //Debug.DrawLine(transform.position, interactPos, Color.black, 1f);
+
+        Collider2D interactCollider = Physics2D.OverlapCircle(interactPos, 0.3f, interactableLayer);
+
+        if(interactCollider != null)
+        {
+            //Show dialog
+            interactCollider.GetComponent<Interactable>()?.Interact() ;
+        }
+    }
+
     private bool IsWalkable(Vector3 targetPos)
     {
-        if(Physics2D.OverlapCircle(targetPos, 0.1f, buildings) != null)
+        if(Physics2D.OverlapCircle(targetPos, 0.1f, solidObjectsLayer | interactableLayer) != null)
         {
             return false;
         }
@@ -96,7 +134,7 @@ public class PlayerController : MonoBehaviour
     {
         //To make sure that player's head wont trigger the encounter since only feet should.
         Vector2 playerPos = new Vector2(transform.position.x, transform.position.y - 0.5f);
-        if (Physics2D.OverlapCircle(playerPos, 0.2f, longGrass) != null)
+        if (Physics2D.OverlapCircle(playerPos, 0.2f, longGrassLayer) != null)
         {
             Collider2D[] colliders = new Collider2D[1];
             Physics2D.OverlapCollider(player.GetComponent<Collider2D>(), new ContactFilter2D().NoFilter(), colliders);

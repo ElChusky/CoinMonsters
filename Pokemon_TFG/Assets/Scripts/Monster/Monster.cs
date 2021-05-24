@@ -479,7 +479,7 @@ public class Monster
 
         foreach (Move move in learntMoves)
         {
-            if (move.CurrentPP > 0)
+            if (move != null && move.CurrentPP > 0)
                 movesWithPP.Add(move);
         }
 
