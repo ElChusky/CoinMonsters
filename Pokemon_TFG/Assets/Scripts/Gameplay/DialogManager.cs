@@ -10,30 +10,35 @@ public class DialogManager : MonoBehaviour
     [SerializeField] int charsPerSecond;
 
     public static DialogManager Instance { get; private set; }
+    public GameObject DialogBox { get { return dialogBox; } }
 
     private void Awake()
     {
         Instance = this;
     }
 
-    public static Dialog dialog;
-    public static int currentLine = 0;
+    public Dialog dialog;
+    public int currentLine = 0;
+    public bool isTyping;
 
-    public void ShowDialog(Dialog dialog)
+    public IEnumerator ShowDialog(Dialog dialog)
     {
+        yield return new WaitForEndOfFrame();
         dialogBox.SetActive(true);
-        DialogManager.dialog = dialog;
+        this.dialog = dialog;
         StartCoroutine(TypeDialog(dialog.Lines[currentLine]));
     }
 
     public IEnumerator TypeDialog(string line)
     {
+        isTyping = true;
         dialogText.text = "";
         for (int i = 0; i < line.Length; i++)
         {
             dialogText.text += line.ToCharArray()[i];
             yield return new WaitForSeconds(1f / charsPerSecond);
         }
+        isTyping = false;
     }
 
 }

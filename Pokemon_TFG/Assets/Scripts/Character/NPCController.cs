@@ -12,6 +12,6 @@ public class NPCController : MonoBehaviour, Interactable
     {
         Debug.Log("Interacting with NPC");
         playerController.dialogActive = true;
-        DialogManager.Instance.ShowDialog(dialog);
+        StartCoroutine(DialogManager.Instance.ShowDialog(dialog));
     }
 }

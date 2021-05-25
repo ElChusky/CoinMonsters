@@ -74,12 +74,22 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
+            DialogManager dialogManager = DialogManager.Instance;
             if (Input.GetKeyDown(KeyCode.Z))
             {
-                DialogManager.currentLine++;
-                if(DialogManager.currentLine < DialogManager.dialog.Lines.Count)
+                if (!dialogManager.isTyping)
                 {
-                    //TypeDialog del DialogManager para continuar dialogo.
+                    dialogManager.currentLine++;
+                    if (dialogManager.currentLine < dialogManager.dialog.Lines.Count)
+                    {
+                        StartCoroutine(dialogManager.TypeDialog(dialogManager.dialog.Lines[dialogManager.currentLine]));
+                    }
+                    else
+                    {
+                        dialogManager.currentLine = 0;
+                        dialogManager.DialogBox.SetActive(false);
+                        dialogActive = false;
+                    }
                 }
             }
         }
