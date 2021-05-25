@@ -8,14 +8,14 @@ public class PlayerController : MonoBehaviour
 {
     public float walkSpeed = 3f;
     public float runSpeed = 7f;
+
     public bool isMoving = false;
     public bool isRunning = false;
-    public bool isAllowedToMove = true;
-    public bool dialogActive = false;
+
     private Vector2 input;
     public GameObject player;
-    public BattleLoader battleLoader;
-    public Camera worldCamera;
+
+    public event Action OnEncountered;
 
     public LayerMask solidObjectsLayer;
     public LayerMask longGrassLayer;
@@ -32,67 +32,44 @@ public class PlayerController : MonoBehaviour
     }
 
     // Update is called once per frame
-    private void Update() {
+    public void HandleUpdate() {
 
-        if (!dialogActive)
+        if (!isMoving)
         {
-            if (!isMoving && isAllowedToMove)
+            isRunning = false;
+            input.x = Input.GetAxisRaw("Horizontal");
+            input.y = Input.GetAxisRaw("Vertical");
+
+            if (Mathf.Abs(input.x) > Mathf.Abs(input.y))
             {
-                isRunning = false;
-                input.x = Input.GetAxisRaw("Horizontal");
-                input.y = Input.GetAxisRaw("Vertical");
-
-                if (Mathf.Abs(input.x) > Mathf.Abs(input.y))
-                {
-                    input.y = 0;
-                }
-                else
-                {
-                    input.x = 0;
-                }
-
-                if (input != Vector2.zero)
-                {
-                    animator.SetFloat("moveX", input.x);
-                    animator.SetFloat("moveY", input.y);
-                    Vector3 targetPos = transform.position;
-                    targetPos.x += input.x;
-                    targetPos.y += input.y;
-                    if (IsWalkable(targetPos))
-                    {
-                        StartCoroutine(MoveTowards(targetPos));
-                    }
-                }
+                input.y = 0;
             }
-            animator.SetBool("isMoving", isMoving);
-            animator.SetBool("isRunning", isRunning);
-
-            if (Input.GetKeyDown(KeyCode.Z))
+            else
             {
-                Interact();
+                input.x = 0;
             }
-        }
-        else
-        {
-            DialogManager dialogManager = DialogManager.Instance;
-            if (Input.GetKeyDown(KeyCode.Z))
+
+            if (input != Vector2.zero)
             {
-                if (!dialogManager.isTyping)
+                animator.SetFloat("moveX", input.x);
+                animator.SetFloat("moveY", input.y);
+                Vector3 targetPos = transform.position;
+                targetPos.x += input.x;
+                targetPos.y += input.y;
+                if (IsWalkable(targetPos))
                 {
-                    dialogManager.currentLine++;
-                    if (dialogManager.currentLine < dialogManager.dialog.Lines.Count)
-                    {
-                        StartCoroutine(dialogManager.TypeDialog(dialogManager.dialog.Lines[dialogManager.currentLine]));
-                    }
-                    else
-                    {
-                        dialogManager.currentLine = 0;
-                        dialogManager.DialogBox.SetActive(false);
-                        dialogActive = false;
-                    }
+                    StartCoroutine(MoveTowards(targetPos));
                 }
             }
         }
+        animator.SetBool("isMoving", isMoving);
+        animator.SetBool("isRunning", isRunning);
+
+        if (Input.GetKeyDown(KeyCode.Z))
+        {
+            Interact();
+        }
+        
 
     }
     IEnumerator MoveTowards(Vector3 targetPos)
@@ -142,7 +119,7 @@ public class PlayerController : MonoBehaviour
 
     private void CheckForEncounters()
     {
-        //To make sure that player's head wont trigger the encounter since only feet should.
+        
         Vector2 playerPos = new Vector2(transform.position.x, transform.position.y - 0.5f);
         if (Physics2D.OverlapCircle(playerPos, 0.2f, longGrassLayer) != null)
         {
@@ -160,21 +137,22 @@ public class PlayerController : MonoBehaviour
             float rare = 3.33f / 187.5f;
             float veryRare = 1.25f / 187.5f;
 
+            bool encountered = false;
+
             if (probability <= veryRare * 100)
             {
                 mapArea.Rarity = 5;
                 animator.SetBool("isMoving", false);
                 Utils.wildMonster = mapArea.GetWildMonster();
                 Utils.monsterParty = gameObject.GetComponent<MonsterParty>();
-                battleLoader.LoadBattle();
-
+                encountered = true;
             } else if(probability <= rare * 100)
             {
                 mapArea.Rarity = 4;
                 animator.SetBool("isMoving", false);
                 Utils.wildMonster = mapArea.GetWildMonster();
                 Utils.monsterParty = gameObject.GetComponent<MonsterParty>();
-                battleLoader.LoadBattle();
+                encountered = true;
 
             } else if(probability <= semiRare * 100)
             {
@@ -182,7 +160,7 @@ public class PlayerController : MonoBehaviour
                 animator.SetBool("isMoving", false);
                 Utils.wildMonster = mapArea.GetWildMonster();
                 Utils.monsterParty = gameObject.GetComponent<MonsterParty>();
-                battleLoader.LoadBattle();
+                encountered = true;
 
             } else if (probability <= common * 100)
             {
@@ -190,7 +168,7 @@ public class PlayerController : MonoBehaviour
                 animator.SetBool("isMoving", false);
                 Utils.wildMonster = mapArea.GetWildMonster();
                 Utils.monsterParty = gameObject.GetComponent<MonsterParty>();
-                battleLoader.LoadBattle();
+                encountered = true;
 
             } else if(probability <= veryCommon * 100)
             {
@@ -198,8 +176,9 @@ public class PlayerController : MonoBehaviour
                 animator.SetBool("isMoving", false);
                 Utils.wildMonster = mapArea.GetWildMonster();
                 Utils.monsterParty = gameObject.GetComponent<MonsterParty>();
-                battleLoader.LoadBattle();
+                encountered = true;
             }
+            if(encountered) OnEncountered();
         }
     }
 

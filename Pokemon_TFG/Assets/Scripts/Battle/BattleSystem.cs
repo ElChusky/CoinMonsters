@@ -9,8 +9,10 @@ public class BattleSystem : MonoBehaviour
     public BattleUnit playerUnit;
     public BattleUnit enemyUnit;
     public BattleDialogBox dialogBox;
+
+    public event Action<bool> OnBattleOver;
+
     public PartyScreen partyScreen;
-    public BattleLoader battleLoader;
 
     private MonsterParty playerParty;
     private Monster wildMonster;
@@ -47,14 +49,14 @@ public class BattleSystem : MonoBehaviour
         Run,
     }
 
-    private void Start()
+    public void StartBattle()
     {
         this.playerParty = Utils.monsterParty;
         this.wildMonster = Utils.wildMonster;
         StartCoroutine(SetupBattle());
     }
 
-    private void Update()
+    public void HandleUpdate()
     {
         if (state == BattleState.ActionSelection)
         {
@@ -84,11 +86,11 @@ public class BattleSystem : MonoBehaviour
         ActionSelection();
     }
 
-    private void BattleOver()
+    private void BattleOver(bool won)
     {
         state = BattleState.BattleOver;
         playerParty.Monsters.ForEach(m => m.OnBattleOver());
-        battleLoader.EndBattle();
+        OnBattleOver(won);
     }
 
     private void OpenPartyScreen()
@@ -168,7 +170,7 @@ public class BattleSystem : MonoBehaviour
 
                 case 3:
                     //Run
-                    battleLoader.EndBattle();
+                    OnBattleOver(true);
                     break;
             }
         }
@@ -195,7 +197,7 @@ public class BattleSystem : MonoBehaviour
         }
         else if (Input.GetKeyDown(KeyCode.RightArrow))
         {
-            if (currentMove == 0 || currentAction == 2)
+            if (currentMove == 0 || currentMove == 2)
             {
                 if (!dialogBox.moveTexts[currentMove + 1].text.Equals("-"))
                     currentMove++;
@@ -561,7 +563,7 @@ public class BattleSystem : MonoBehaviour
             Monster nextPoke = playerParty.GetHealthyPokemon();
             if (nextPoke == null)
             {
-                BattleOver();
+                BattleOver(false);
             }
             else
             {
@@ -570,7 +572,7 @@ public class BattleSystem : MonoBehaviour
             }
         } else
         {
-            BattleOver();
+            BattleOver(true);
         }
     }
 

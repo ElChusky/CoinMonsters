@@ -17,6 +17,6 @@ public class MonsterWithRarity
             return monster;
         }
     }
-    public int Rarity { get; }
+    public int Rarity { get { return rarity; } }
     
 }

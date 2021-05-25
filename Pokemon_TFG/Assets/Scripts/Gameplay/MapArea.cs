@@ -6,7 +6,6 @@ public class MapArea : MonoBehaviour
 {
     //Dictionary<rarityLvl, Monster>
     [SerializeField] List<MonsterWithRarity> wildMonsters;
-    private int rarity;
 
     public int Rarity { get; set; }
 
@@ -19,12 +18,12 @@ public class MapArea : MonoBehaviour
         {
             foreach (MonsterWithRarity pair in wildMonsters)
             {
-                if (pair.Rarity == rarity)
+                if (pair.Rarity == Rarity)
                 {
                     monstersWithRarity.Add(pair._Monster);
                 }
             }
-            rarity--;
+            Rarity--;
         } while (monstersWithRarity.Count == 0);
         //We return a random Monster of the list
         Monster monster = monstersWithRarity[Random.Range(0, monstersWithRarity.Count)];
