@@ -67,6 +67,7 @@ public class CharacterAnimator : MonoBehaviour
         #region Deciding which anim depending on parameters
         if (MoveX == 1)
         {
+            facing = FacingDir.Right;
             if (!IsRunning)
                 currentAnim = walkRightAnim;
             else
@@ -74,6 +75,7 @@ public class CharacterAnimator : MonoBehaviour
         }
         else if (MoveX == -1)
         {
+            facing = FacingDir.Left;
             if (!IsRunning)
                 currentAnim = walkLeftAnim;
             else
@@ -81,6 +83,7 @@ public class CharacterAnimator : MonoBehaviour
         }
         else if(MoveY == 1)
         {
+            facing = FacingDir.Up;
             if (!IsRunning)
                 currentAnim = walkUpAnim;
             else
@@ -88,6 +91,7 @@ public class CharacterAnimator : MonoBehaviour
         } 
         else if(MoveY == -1)
         {
+            facing = FacingDir.Down;
             if (!IsRunning)
                 currentAnim = walkDownAnim;
             else

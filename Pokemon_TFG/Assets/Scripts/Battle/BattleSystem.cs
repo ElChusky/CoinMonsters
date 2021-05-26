@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using static BaseMonster;
 
 public enum BattleState
@@ -25,47 +26,108 @@ public enum BattleAction
 
 public class BattleSystem : MonoBehaviour
 {
-    public BattleUnit playerUnit;
-    public BattleUnit enemyUnit;
-    public BattleDialogBox dialogBox;
+    [SerializeField] BattleUnit playerUnit;
+    [SerializeField] BattleUnit enemyUnit;
+    [SerializeField] BattleDialogBox dialogBox;
+    [SerializeField] PartyScreen partyScreen;
+    [SerializeField] Image playerImage;
+    [SerializeField] Image trainerImage;
 
     public event Action<bool> OnBattleOver;
 
-    public PartyScreen partyScreen;
-
-    private MonsterParty playerParty;
-    private Monster wildMonster;
-
     private BattleState state;
     private BattleState? previousState;
-
     private int currentAction;
     private int currentMove;
     private int currentMember;
 
+    private MonsterParty playerParty;
+    private MonsterParty trainerParty;
+    private Monster wildMonster;
+
+    private bool isTrainerBattle = false;
+    PlayerController player;
+    TrainerController trainer;
+
     private IEnumerator CoroutineTypeText(string text)
     {
         yield return dialogBox.TypeDialog(text);
-        yield return new WaitUntil(() => dialogBox.dialogText.text.Equals(text));
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(1f);
     }
 
     public void StartBattle(MonsterParty monsterParty, Monster wildMonster)
     {
+        currentAction = 0;
+        currentMember = 0;
+        currentMove = 0;
+
         this.playerParty = monsterParty;
         this.wildMonster = wildMonster;
         StartCoroutine(SetupBattle());
     }
+
+    public void StartTrainerBattle(MonsterParty monsterParty, MonsterParty trainerParty)
+    {
+        this.playerParty = monsterParty;
+        this.trainerParty = trainerParty;
+
+        isTrainerBattle = true;
+        player = playerParty.GetComponent<PlayerController>();
+        trainer = trainerParty.GetComponent<TrainerController>();
+
+        StartCoroutine(SetupBattle());
+    }
+
     public IEnumerator SetupBattle()
     {
-        playerUnit.Setup(playerParty.GetHealthyPokemon());
-        enemyUnit.Setup(wildMonster);
+        playerUnit.Clear();
+        enemyUnit.Clear();
+
+        if (!isTrainerBattle)
+        {
+            //Wild Monster Battle
+            playerUnit.Setup(playerParty.GetHealthyPokemon());
+            enemyUnit.Setup(wildMonster);
+
+            dialogBox.SetMoveNames(playerUnit.Monster.LearntMoves);
+
+            yield return CoroutineTypeText("Ha aparecido un " + enemyUnit.Monster.BaseMonster.Name + " salvaje.");
+        }
+        else
+        {
+            //Trainer Battle
+
+            //Show trainer and player sprites
+            playerUnit.gameObject.SetActive(false);
+            enemyUnit.gameObject.SetActive(false);
+
+            playerImage.gameObject.SetActive(true);
+            trainerImage.gameObject.SetActive(true);
+
+            playerImage.sprite = player.Sprite;
+            trainerImage.sprite = trainer.Sprite;
+
+            yield return CoroutineTypeText($"¡{trainer.Name} quiere pelear!");
+
+            //Send out first trainer monster
+            trainerImage.gameObject.SetActive(false);
+            enemyUnit.gameObject.SetActive(true);
+            Monster enemyMonster = trainerParty.GetHealthyPokemon();
+            enemyUnit.Setup(enemyMonster);
+            yield return CoroutineTypeText($"¡{trainer.Name} ha enviado a {enemyMonster.BaseMonster.Name}!");
+
+            //Send out first player monster
+            playerImage.gameObject.SetActive(false);
+            playerUnit.gameObject.SetActive(true);
+            Monster playerMonster = playerParty.GetHealthyPokemon();
+            playerUnit.Setup(playerMonster);
+
+            dialogBox.SetMoveNames(playerUnit.Monster.LearntMoves);
+            yield return CoroutineTypeText($"¡Adelante, {playerMonster.BaseMonster.Name}!");
+
+        }
 
         partyScreen.Init();
-
-        dialogBox.SetMoveNames(playerUnit.Monster.LearntMoves);
-
-        yield return CoroutineTypeText("Ha aparecido un " + enemyUnit.Monster.BaseMonster.Name + " salvaje.");
 
         ActionSelection();
     }
@@ -91,6 +153,9 @@ public class BattleSystem : MonoBehaviour
     {
         state = BattleState.BattleOver;
         playerParty.Monsters.ForEach(m => m.OnBattleOver());
+
+        dialogBox.EnableActionSelector(false);
+
         OnBattleOver(won);
     }
 
@@ -118,7 +183,6 @@ public class BattleSystem : MonoBehaviour
 
         dialogBox.EnableMoveSelector(false);
         dialogBox.EnableDialogText(true);
-        dialogBox.EnableActionSelector(true);
 
         StartCoroutine(CoroutineTypeText("¿Que debería hacer " + playerUnit.Monster.BaseMonster.Name + "?"));
 
@@ -130,12 +194,12 @@ public class BattleSystem : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.DownArrow))
         {
             if (currentAction < 2)
-                currentAction = currentAction + 2;
+                currentAction += 2;
         }
         else if (Input.GetKeyDown(KeyCode.UpArrow))
         {
             if (currentAction > 1)
-                currentAction = currentAction - 2;
+                currentAction += 2;
         }
         else if (Input.GetKeyDown(KeyCode.RightArrow))
         {
@@ -171,7 +235,7 @@ public class BattleSystem : MonoBehaviour
 
                 case 3:
                     //Run
-                    OnBattleOver(true);
+                    BattleOver(true);
                     break;
             }
         }
@@ -206,7 +270,7 @@ public class BattleSystem : MonoBehaviour
         }
         else if (Input.GetKeyDown(KeyCode.LeftArrow))
         {
-            if (currentMove == 1 || currentAction == 3)
+            if (currentMove == 1 || currentMove == 3)
             {
                 if (!dialogBox.moveTexts[currentMove - 1].text.Equals("-"))
                     currentMove--;
@@ -561,20 +625,43 @@ public class BattleSystem : MonoBehaviour
     {
         if (faintedUnit.isPlayerUnit)
         {
-            Monster nextPoke = playerParty.GetHealthyPokemon();
-            if (nextPoke == null)
+            Monster nextMonster = playerParty.GetHealthyPokemon();
+            if (nextMonster == null)
             {
                 BattleOver(false);
             }
             else
             {
                 OpenPartyScreen();
-                
             }
         } else
         {
-            BattleOver(true);
+            if (!isTrainerBattle)
+            {
+                BattleOver(true);
+            }
+            else
+            {
+                Monster nextMonster = trainerParty.GetHealthyPokemon();
+                if (nextMonster != null)
+                {
+                    //Send out next monster
+                    StartCoroutine(SendNextTrainerMonster(nextMonster));
+                }
+                else
+                    BattleOver(true);
+            }
         }
+    }
+
+    private IEnumerator SendNextTrainerMonster(Monster nextMonster)
+    {
+        state = BattleState.Busy;
+
+        enemyUnit.Setup(nextMonster);
+        yield return CoroutineTypeText($"¡{trainer.Name} ha enviado a {nextMonster.BaseMonster.Name}!");
+
+        state = BattleState.RunningTurn;
     }
 
 }

@@ -7,6 +7,9 @@ using UnityEngine.SceneManagement;
 public class PlayerController : MonoBehaviour
 {
 
+    [SerializeField] new string name;
+    [SerializeField] Sprite sprite;
+
     private Vector2 input;
     public GameObject player;
 
@@ -140,6 +143,21 @@ public class PlayerController : MonoBehaviour
             character.Animator.IsRunning = false;
             OnEnterTrainersView?.Invoke(collider);
         }
+    }
+
+    public string Name
+    {
+        get { return name; }
+    }
+
+    public Sprite Sprite
+    {
+        get { return sprite; }
+    }
+
+    public Character Character
+    {
+        get { return character; }
     }
 
 }

@@ -72,15 +72,6 @@ public class Character : MonoBehaviour
         return true;
     }
 
-    private bool IsWalkable(Vector3 targetPos)
-    {
-        if (Physics2D.OverlapCircle(targetPos, 0.1f, GameLayers.i.SolidObjectsLayer | GameLayers.i.InteractableLayer | GameLayers.i.PlayerLayer) != null)
-        {
-            return false;
-        }
-        return true;
-    }
-
     public void LookTowards(Vector3 targetPos)
     {
         float xdiff = Mathf.Floor(targetPos.x) - Mathf.Floor(transform.position.x);

@@ -497,6 +497,8 @@ RectTransform:
   - {fileID: 443938351}
   - {fileID: 1946475810}
   - {fileID: 452704979}
+  - {fileID: 298161731}
+  - {fileID: 933020357}
   m_Father: {fileID: 2136716081}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -832,6 +834,81 @@ CanvasRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 215818058}
+  m_CullTransparentMesh: 0
+--- !u!1 &298161730
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 298161731}
+  - component: {fileID: 298161733}
+  - component: {fileID: 298161732}
+  m_Layer: 5
+  m_Name: PlayerCharacter
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!224 &298161731
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 298161730}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 51787643}
+  m_RootOrder: 8
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -206.4, y: -50}
+  m_SizeDelta: {x: 200, y: 200}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &298161732
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 298161730}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 7103749574173715010, guid: a1305ff70c3d5c44c956e665ce90ce08,
+    type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &298161733
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 298161730}
   m_CullTransparentMesh: 0
 --- !u!1 &352588138
 GameObject:
@@ -18519,6 +18596,80 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &933020356
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 933020357}
+  - component: {fileID: 933020359}
+  - component: {fileID: 933020358}
+  m_Layer: 5
+  m_Name: TrainerCharacter
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!224 &933020357
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 933020356}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 51787643}
+  m_RootOrder: 9
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 196.6, y: 149.89}
+  m_SizeDelta: {x: 275, y: 275}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &933020358
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 933020356}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 21300000, guid: 70efe8d110bea154592e41b4fbb56a2d, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &933020359
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 933020356}
+  m_CullTransparentMesh: 0
 --- !u!1001 &936218122
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -40461,6 +40612,7 @@ GameObject:
   - component: {fileID: 1408479567}
   - component: {fileID: 1408479561}
   - component: {fileID: 1408479560}
+  - component: {fileID: 1408479562}
   m_Layer: 10
   m_Name: Trainer
   m_TagString: Untagged
@@ -40519,6 +40671,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   walkSpeed: 3
   runSpeed: 4.5
+--- !u!114 &1408479562
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1408479559}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 99d4c9dcaaac1474980819f1daaf10ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  monsters:
+  - baseMonster: {fileID: 11400000, guid: ba4499c3575388d4286885848ca6cdfa, type: 2}
+    level: 5
+  - baseMonster: {fileID: 11400000, guid: 5085600bee039b14ba68d7436d764ac0, type: 2}
+    level: 5
 --- !u!61 &1408479563
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -40645,6 +40814,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5430611e74f7f2442b2531a6c3e37ce7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  name: Calem
+  sprite: {fileID: 21300000, guid: 70efe8d110bea154592e41b4fbb56a2d, type: 3}
   dialog:
     lines:
     - "\xA1\xBFNo ves que estoy haciendo footing?!"
@@ -40927,8 +41098,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -33.1, y: 26.3}
-  m_SizeDelta: {x: 215, y: 47.79724}
+  m_AnchoredPosition: {x: -33.1, y: 25.773}
+  m_SizeDelta: {x: 215, y: 48.850616}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1502680172
 MonoBehaviour:
@@ -42667,6 +42838,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5a7fab8d50a4ce419bce4977d465985, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  name: ElChusky
+  sprite: {fileID: 7103749574173715010, guid: a1305ff70c3d5c44c956e665ce90ce08, type: 3}
   player: {fileID: 1745246845}
 --- !u!114 &1745246849
 MonoBehaviour:
@@ -43182,7 +43355,7 @@ GameObject:
   - component: {fileID: 1875004225}
   - component: {fileID: 1875004227}
   m_Layer: 5
-  m_Name: Player's Pokemon
+  m_Name: Player's Monster
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -44184,7 +44357,7 @@ GameObject:
   - component: {fileID: 2112377138}
   - component: {fileID: 2112377140}
   m_Layer: 5
-  m_Name: Enemy Pokemon
+  m_Name: Enemy Monster
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -44293,6 +44466,8 @@ MonoBehaviour:
   enemyUnit: {fileID: 2112377140}
   dialogBox: {fileID: 1946475813}
   partyScreen: {fileID: 452704978}
+  playerImage: {fileID: 298161732}
+  trainerImage: {fileID: 933020358}
 --- !u!4 &2136716081
 Transform:
   m_ObjectHideFlags: 0
