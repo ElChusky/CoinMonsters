@@ -4,6 +4,25 @@ using System.Collections.Generic;
 using UnityEngine;
 using static BaseMonster;
 
+public enum BattleState
+{
+    Start,
+    ActionSelection,
+    MoveSelection,
+    PartyScreen,
+    RunningTurn,
+    Busy,
+    BattleOver,
+}
+
+public enum BattleAction
+{
+    Move,
+    SwitchMonster,
+    UseItem,
+    Run,
+}
+
 public class BattleSystem : MonoBehaviour
 {
     public BattleUnit playerUnit;
@@ -31,29 +50,24 @@ public class BattleSystem : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
     }
 
-    public enum BattleState{
-        Start,
-        ActionSelection, 
-        MoveSelection,
-        PartyScreen,
-        RunningTurn,
-        Busy,
-        BattleOver,
-    }
-
-    public enum BattleAction
+    public void StartBattle(MonsterParty monsterParty, Monster wildMonster)
     {
-        Move,
-        SwitchMonster,
-        UseItem,
-        Run,
-    }
-
-    public void StartBattle()
-    {
-        this.playerParty = Utils.monsterParty;
-        this.wildMonster = Utils.wildMonster;
+        this.playerParty = monsterParty;
+        this.wildMonster = wildMonster;
         StartCoroutine(SetupBattle());
+    }
+    public IEnumerator SetupBattle()
+    {
+        playerUnit.Setup(playerParty.GetHealthyPokemon());
+        enemyUnit.Setup(wildMonster);
+
+        partyScreen.Init();
+
+        dialogBox.SetMoveNames(playerUnit.Monster.LearntMoves);
+
+        yield return CoroutineTypeText("Ha aparecido un " + enemyUnit.Monster.BaseMonster.Name + " salvaje.");
+
+        ActionSelection();
     }
 
     public void HandleUpdate()
@@ -72,19 +86,6 @@ public class BattleSystem : MonoBehaviour
         }
     }
 
-    public IEnumerator SetupBattle()
-    {
-        playerUnit.Setup(playerParty.GetHealthyPokemon());
-        enemyUnit.Setup(wildMonster);
-
-        partyScreen.Init();
-
-        dialogBox.SetMoveNames(playerUnit.Monster.LearntMoves);
-
-        yield return CoroutineTypeText("Ha aparecido un " + enemyUnit.Monster.BaseMonster.Name + " salvaje.");
-
-        ActionSelection();
-    }
 
     private void BattleOver(bool won)
     {

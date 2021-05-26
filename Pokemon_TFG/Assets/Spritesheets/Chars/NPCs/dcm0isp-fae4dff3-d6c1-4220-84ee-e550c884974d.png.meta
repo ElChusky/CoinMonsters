@@ -10,7 +10,7 @@ TextureImporter:
     second: DownWalk_1
   - first:
       213: -141240388705963629
-    second: DownWalk_2
+    second: DownWalk_3
   - first:
       213: 6359305678285666948
     second: LeftWalk_0
@@ -19,7 +19,7 @@ TextureImporter:
     second: LeftWalk_1
   - first:
       213: -5571598582633960009
-    second: LeftWalk_2
+    second: LeftWalk_3
   - first:
       213: -3474880579033863642
     second: RightWalk_0
@@ -28,7 +28,7 @@ TextureImporter:
     second: RightWalk_1
   - first:
       213: 2877630546122274615
-    second: RightWalk_2
+    second: RightWalk_3
   - first:
       213: -2463857147383792066
     second: UpWalk_0
@@ -37,7 +37,19 @@ TextureImporter:
     second: UpWalk_1
   - first:
       213: 1020647317186828217
-    second: UpWalk_2
+    second: UpWalk_3
+  - first:
+      213: -3489757162589644694
+    second: DownWalk_3
+  - first:
+      213: -7755488147635208772
+    second: LeftWalk_3
+  - first:
+      213: -8055170537915137121
+    second: RightWalk_3
+  - first:
+      213: -365635220574783138
+    second: UpWalk_3
   externalObjects: {}
   serializedVersion: 11
   mipmaps:
@@ -131,7 +143,7 @@ TextureImporter:
         width: 30
         height: 43
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -152,7 +164,7 @@ TextureImporter:
         width: 30
         height: 43
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -165,7 +177,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: DownWalk_2
+      name: DownWalk_3
       rect:
         serializedVersion: 2
         x: 98
@@ -173,7 +185,7 @@ TextureImporter:
         width: 30
         height: 43
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -194,7 +206,7 @@ TextureImporter:
         width: 30
         height: 43
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -215,7 +227,7 @@ TextureImporter:
         width: 30
         height: 43
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -228,15 +240,15 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: LeftWalk_2
+      name: LeftWalk_3
       rect:
         serializedVersion: 2
         x: 96
-        y: 97
+        y: 96
         width: 30
         height: 43
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -257,7 +269,7 @@ TextureImporter:
         width: 30
         height: 43
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -278,7 +290,7 @@ TextureImporter:
         width: 30
         height: 43
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -291,7 +303,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: RightWalk_2
+      name: RightWalk_3
       rect:
         serializedVersion: 2
         x: 98
@@ -299,7 +311,7 @@ TextureImporter:
         width: 30
         height: 43
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -320,7 +332,7 @@ TextureImporter:
         width: 30
         height: 43
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -341,7 +353,7 @@ TextureImporter:
         width: 30
         height: 43
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -354,10 +366,94 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: UpWalk_2
+      name: UpWalk_3
       rect:
         serializedVersion: 2
         x: 97
+        y: 0
+        width: 30
+        height: 43
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9b750edc3511a2e00800000000000000
+      internalID: 1020647317186828217
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DownWalk_2
+      rect:
+        serializedVersion: 2
+        x: 65
+        y: 144
+        width: 30
+        height: 43
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a681873a954e19fc0800000000000000
+      internalID: -3489757162589644694
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LeftWalk_2
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 96
+        width: 30
+        height: 43
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cbd737cbe98fe5490800000000000000
+      internalID: -7755488147635208772
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RightWalk_2
+      rect:
+        serializedVersion: 2
+        x: 66
+        y: 48
+        width: 30
+        height: 43
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f93406ae219463090800000000000000
+      internalID: -8055170537915137121
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UpWalk_2
+      rect:
+        serializedVersion: 2
+        x: 65
         y: 0
         width: 30
         height: 43
@@ -368,8 +464,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 9b750edc3511a2e00800000000000000
-      internalID: 1020647317186828217
+      spriteID: e59b44044b00deaf0800000000000000
+      internalID: -365635220574783138
       vertices: []
       indices: 
       edges: []

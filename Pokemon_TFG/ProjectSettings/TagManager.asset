@@ -14,11 +14,11 @@ TagManager:
   - UI
   - 
   - 
-  - longGrass
-  - buildings
-  - interactable
-  - 
-  - 
+  - Long Grass
+  - Solid Objects
+  - Interactable
+  - Player
+  - FOV Layer
   - 
   - 
   - 

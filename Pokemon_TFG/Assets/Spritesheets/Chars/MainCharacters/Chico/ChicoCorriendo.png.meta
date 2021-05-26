@@ -10,7 +10,7 @@ TextureImporter:
     second: DownRun_1
   - first:
       213: -484404254266712626
-    second: DownRun_2
+    second: DownRun_3
   - first:
       213: -2082894474096466874
     second: LeftRun_0
@@ -19,7 +19,7 @@ TextureImporter:
     second: LeftRun_1
   - first:
       213: 8108423195948366875
-    second: LeftRun_2
+    second: LeftRun_3
   - first:
       213: 4279504263948133052
     second: RightRun_0
@@ -28,7 +28,7 @@ TextureImporter:
     second: RightRun_1
   - first:
       213: 172379885520538540
-    second: RightRun_2
+    second: RightRun_3
   - first:
       213: -6402343781862242508
     second: UpRun_0
@@ -37,7 +37,19 @@ TextureImporter:
     second: UpRun_1
   - first:
       213: -6641221346911411897
-    second: UpRun_2
+    second: UpRun_3
+  - first:
+      213: -5441115285634889832
+    second: DownRun_3
+  - first:
+      213: -3247658232751225200
+    second: LeftRun_3
+  - first:
+      213: -5029950149287007882
+    second: RightRun_3
+  - first:
+      213: -3626591317141550263
+    second: UpRun_3
   externalObjects: {}
   serializedVersion: 11
   mipmaps:
@@ -131,7 +143,7 @@ TextureImporter:
         width: 42
         height: 48
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -152,7 +164,7 @@ TextureImporter:
         width: 42
         height: 48
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -165,7 +177,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: DownRun_2
+      name: DownRun_3
       rect:
         serializedVersion: 2
         x: 202
@@ -173,7 +185,7 @@ TextureImporter:
         width: 42
         height: 48
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -194,7 +206,7 @@ TextureImporter:
         width: 42
         height: 48
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -215,7 +227,7 @@ TextureImporter:
         width: 42
         height: 48
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -228,7 +240,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: LeftRun_2
+      name: LeftRun_3
       rect:
         serializedVersion: 2
         x: 202
@@ -236,7 +248,7 @@ TextureImporter:
         width: 42
         height: 48
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -257,7 +269,7 @@ TextureImporter:
         width: 42
         height: 48
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -278,7 +290,7 @@ TextureImporter:
         width: 42
         height: 48
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -291,15 +303,15 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: RightRun_2
+      name: RightRun_3
       rect:
         serializedVersion: 2
-        x: 204
+        x: 205
         y: 66
         width: 42
         height: 48
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -316,11 +328,11 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 10
-        y: 0
+        y: 2
         width: 42
         height: 48
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -337,11 +349,11 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 74
-        y: 2
+        y: 4
         width: 42
-        height: 52
+        height: 50
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -354,15 +366,15 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: UpRun_2
+      name: UpRun_3
       rect:
         serializedVersion: 2
         x: 202
-        y: 2
+        y: 4
         width: 42
-        height: 52
+        height: 50
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -370,6 +382,90 @@ TextureImporter:
       bones: []
       spriteID: 741aa962f54a5d3a0800000000000000
       internalID: -6641221346911411897
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: DownRun_2
+      rect:
+        serializedVersion: 2
+        x: 138
+        y: 194
+        width: 42
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 897c8c9d9764d74b0800000000000000
+      internalID: -5441115285634889832
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LeftRun_2
+      rect:
+        serializedVersion: 2
+        x: 138
+        y: 130
+        width: 42
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0968dfc4b000ee2d0800000000000000
+      internalID: -3247658232751225200
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RightRun_2
+      rect:
+        serializedVersion: 2
+        x: 140
+        y: 66
+        width: 42
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 67923d13df6023ab0800000000000000
+      internalID: -5029950149287007882
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UpRun_2
+      rect:
+        serializedVersion: 2
+        x: 138
+        y: 2
+        width: 42
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 94b034c5962cbadc0800000000000000
+      internalID: -3626591317141550263
       vertices: []
       indices: 
       edges: []

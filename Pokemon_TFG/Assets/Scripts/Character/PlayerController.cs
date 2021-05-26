@@ -6,37 +6,26 @@ using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
-    public float walkSpeed = 3f;
-    public float runSpeed = 7f;
-
-    public bool isMoving = false;
-    public bool isRunning = false;
 
     private Vector2 input;
     public GameObject player;
 
     public event Action OnEncountered;
+    public event Action<Collider2D> OnEnterTrainersView;
 
-    public LayerMask solidObjectsLayer;
-    public LayerMask longGrassLayer;
-    public LayerMask interactableLayer;
-
-    private Animator animator;
-
-    
+    private Character character;
 
     private void Awake()
     {
-        animator = GetComponent<Animator>();
-        ConditionsDB.Init();
+        character = GetComponent<Character>();
     }
 
     // Update is called once per frame
     public void HandleUpdate() {
 
-        if (!isMoving)
+        if (!character.IsMoving)
         {
-            isRunning = false;
+            character.IsRunning = false;
             input.x = Input.GetAxisRaw("Horizontal");
             input.y = Input.GetAxisRaw("Vertical");
 
@@ -51,77 +40,46 @@ public class PlayerController : MonoBehaviour
 
             if (input != Vector2.zero)
             {
-                animator.SetFloat("moveX", input.x);
-                animator.SetFloat("moveY", input.y);
-                Vector3 targetPos = transform.position;
-                targetPos.x += input.x;
-                targetPos.y += input.y;
-                if (IsWalkable(targetPos))
-                {
-                    StartCoroutine(MoveTowards(targetPos));
-                }
+                StartCoroutine(character.Move(input, true, OnMoveOver));
             }
         }
-        animator.SetBool("isMoving", isMoving);
-        animator.SetBool("isRunning", isRunning);
+
+        character.HandleUpdate();
 
         if (Input.GetKeyDown(KeyCode.Z))
         {
             Interact();
         }
-        
 
-    }
-    IEnumerator MoveTowards(Vector3 targetPos)
-    {
-        isMoving = true;
-        isRunning = Input.GetKey(KeyCode.X);
-
-        while ((targetPos - transform.position).sqrMagnitude > Mathf.Epsilon)
-        {
-            float speed = walkSpeed;
-            if (isRunning)
-                speed = runSpeed;
-            transform.position = Vector3.MoveTowards(transform.position, targetPos, speed * Time.deltaTime);
-            yield return null;
-        }
-        transform.position = targetPos;
-
-        isMoving = false;
-
-        CheckForEncounters();
     }
 
     private void Interact()
     {
-        Vector3 facingDir = new Vector3(animator.GetFloat("moveX"), animator.GetFloat("moveY"));
+        Vector3 facingDir = new Vector3(character.Animator.MoveX, character.Animator.MoveY);
         Vector3 interactPos = transform.position + facingDir;
 
         //Debug.DrawLine(transform.position, interactPos, Color.black, 1f);
 
-        Collider2D interactCollider = Physics2D.OverlapCircle(interactPos, 0.3f, interactableLayer);
+        Collider2D interactCollider = Physics2D.OverlapCircle(interactPos, 0.3f, GameLayers.i.InteractableLayer);
 
         if(interactCollider != null)
         {
             //Show dialog
-            interactCollider.GetComponent<Interactable>()?.Interact() ;
+            interactCollider.GetComponent<Interactable>()?.Interact(transform) ;
         }
     }
 
-    private bool IsWalkable(Vector3 targetPos)
+    private void OnMoveOver()
     {
-        if(Physics2D.OverlapCircle(targetPos, 0.1f, solidObjectsLayer | interactableLayer) != null)
-        {
-            return false;
-        }
-        return true;
+        CheckIfInTrainersView();
+        CheckForEncounters();
     }
 
     private void CheckForEncounters()
     {
         
         Vector2 playerPos = new Vector2(transform.position.x, transform.position.y - 0.5f);
-        if (Physics2D.OverlapCircle(playerPos, 0.2f, longGrassLayer) != null)
+        if (Physics2D.OverlapCircle(playerPos, 0.2f, GameLayers.i.LongGrassLayer) != null)
         {
             Collider2D[] colliders = new Collider2D[1];
             Physics2D.OverlapCollider(player.GetComponent<Collider2D>(), new ContactFilter2D().NoFilter(), colliders);
@@ -142,43 +100,45 @@ public class PlayerController : MonoBehaviour
             if (probability <= veryRare * 100)
             {
                 mapArea.Rarity = 5;
-                animator.SetBool("isMoving", false);
-                Utils.wildMonster = mapArea.GetWildMonster();
-                Utils.monsterParty = gameObject.GetComponent<MonsterParty>();
                 encountered = true;
             } else if(probability <= rare * 100)
             {
                 mapArea.Rarity = 4;
-                animator.SetBool("isMoving", false);
-                Utils.wildMonster = mapArea.GetWildMonster();
-                Utils.monsterParty = gameObject.GetComponent<MonsterParty>();
                 encountered = true;
 
             } else if(probability <= semiRare * 100)
             {
                 mapArea.Rarity = 3;
-                animator.SetBool("isMoving", false);
-                Utils.wildMonster = mapArea.GetWildMonster();
-                Utils.monsterParty = gameObject.GetComponent<MonsterParty>();
                 encountered = true;
 
             } else if (probability <= common * 100)
             {
                 mapArea.Rarity = 2;
-                animator.SetBool("isMoving", false);
-                Utils.wildMonster = mapArea.GetWildMonster();
-                Utils.monsterParty = gameObject.GetComponent<MonsterParty>();
                 encountered = true;
 
             } else if(probability <= veryCommon * 100)
             {
                 mapArea.Rarity = 1;
-                animator.SetBool("isMoving", false);
-                Utils.wildMonster = mapArea.GetWildMonster();
-                Utils.monsterParty = gameObject.GetComponent<MonsterParty>();
                 encountered = true;
             }
-            if(encountered) OnEncountered();
+            if (encountered)
+            {
+                character.Animator.IsMoving = false;
+                character.Animator.IsRunning = false;
+                OnEncountered();
+            }
+        }
+    }
+
+    private void CheckIfInTrainersView()
+    {
+        Vector2 playerPos = new Vector2(transform.position.x, transform.position.y);
+        Collider2D collider = Physics2D.OverlapCircle(playerPos, 0.2f, GameLayers.i.FovLayer);
+        if (collider != null)
+        {
+            character.Animator.IsMoving = false;
+            character.Animator.IsRunning = false;
+            OnEnterTrainersView?.Invoke(collider);
         }
     }
 
