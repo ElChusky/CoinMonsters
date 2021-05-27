@@ -8,12 +8,12 @@ public class SpriteAnimator
     List<Sprite> frames;
     float frameRate;
 
-    int currentFrame;
+    int currentFrame = 0;
     float timer;
 
-    public SpriteAnimator(List<Sprite> frames, SpriteRenderer spriteRenderer, float speed = 3)
+    public SpriteAnimator(List<Sprite> frames, SpriteRenderer spriteRenderer, float fps = 3)
     {
-        this.frameRate = 1 / speed;
+        frameRate = 1 / fps;
         this.spriteRenderer = spriteRenderer;
         this.frames = frames;
     }

@@ -12,6 +12,9 @@ public class BattleDialogBox : MonoBehaviour
     public GameObject actionSelector;
     public GameObject moveSelector;
     public GameObject moveDetails;
+    public GameObject choiseBox;
+    public Text yesText;
+    public Text noText;
 
     public List<Text> actionTexts;
     public Text[] moveTexts = new Text[4];
@@ -42,6 +45,11 @@ public class BattleDialogBox : MonoBehaviour
     public void EnableActionSelector(bool enabled)
     {
         actionSelector.SetActive(enabled);
+    }
+
+    public void EnableChoiceBox(bool enabled)
+    {
+        choiseBox.SetActive(enabled);
     }
 
     public void EnableMoveSelector(bool enabled)
@@ -81,6 +89,20 @@ public class BattleDialogBox : MonoBehaviour
             ppText.color = Color.red;
         else
             ppText.color = Color.black;
+    }
+
+    public void UpdateChoiceSelection(bool yesSelected)
+    {
+        if (yesSelected)
+        {
+            yesText.color = highlightedColor;
+            noText.color = Color.black;
+        }
+        else
+        {
+            noText.color = highlightedColor;
+            yesText.color = Color.black;
+        }
     }
 
     public void SetMoveNames(Move[] learnedMoves)

@@ -54,3 +54,6 @@ TagManager:
   - name: OverChar
     uniqueID: 3657955123
     locked: 0
+  - name: Battle
+    uniqueID: 3594471797
+    locked: 0

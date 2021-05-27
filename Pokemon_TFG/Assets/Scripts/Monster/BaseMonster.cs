@@ -7,7 +7,6 @@ using UnityEngine;
 public class BaseMonster : ScriptableObject
 {
     [SerializeField] new string name;
-    [SerializeField] int id;
 
     [SerializeField] Sprite sprite;
 
@@ -22,38 +21,33 @@ public class BaseMonster : ScriptableObject
     [SerializeField] int spDefense;
     [SerializeField] int speed;
 
+    [SerializeField] int catchRate = 255;
+
+    [SerializeField] int baseExp;
+    [SerializeField] GrowthRate growthRate;
+
     [SerializeField] List<LearnableMove> learnableMoves = new List<LearnableMove>();
 
-    public BaseMonster(string name, int id, Sprite sprite, MonsterType type1, MonsterType type2, int maxHp, int attack, int defense, int spAttack, int spDefense, int speed, List<LearnableMove> learnableMoves)
+    public int GetExpForLevel(int level)
     {
-        this.name = name;
-        this.id = id;
-        this.sprite = sprite;
-        this.type1 = type1;
-        this.type2 = type2;
-        this.maxHp = maxHp;
-        this.attack = attack;
-        this.defense = defense;
-        this.spAttack = spAttack;
-        this.spDefense = spDefense;
-        this.speed = speed;
-        this.learnableMoves = learnableMoves;
-    }
+        if(growthRate == GrowthRate.Fast)
+        {
+            return 4 * (level * level * level) / 5;
+        }
+        else if(growthRate == GrowthRate.MediumFast)
+        {
+            return level * level * level;
+        }
+        else if(growthRate == GrowthRate.MediumSlow)
+        {
+            return 6 / 5 * (level * level * level) - 15 * (level * level) + 100 * level - 140;
+        }
+        else if(growthRate == GrowthRate.Slow)
+        {
+            return (5 * level * level * level) / 4;
+        }
 
-    public enum Stat
-    {
-        Attack,
-        Defense,
-        SpAttack,
-        SpDefense,
-        Speed,
-
-        //Not a boostable stat, but attacks that restore HP will be here
-        HP,
-
-        //Not actual stats, but buffs or debuffs for moveAccuracy
-        Accuracy,
-        Evasion
+        return -1;
     }
 
     public string Name { get => name; set => name = value; }
@@ -63,11 +57,34 @@ public class BaseMonster : ScriptableObject
     public int SpAttack { get => spAttack; set => spAttack = value; }
     public int SpDefense { get => spDefense; set => spDefense = value; }
     public int Speed { get => speed; set => speed = value; }
+    public int BaseExp { get => baseExp; set => baseExp = value; }
+    public GrowthRate GrowthRate { get => growthRate; set => growthRate = value; }
     public Sprite Sprite { get => sprite; set => sprite = value; }
     public List<LearnableMove> LearnableMoves { get => learnableMoves; set => learnableMoves = value; }
-    public int Id { get => id; set => id = value; }
+    public int CatchRate { get => catchRate; set => catchRate = value; }
     public MonsterType Type1 { get => type1; set => type1 = value; }
     public MonsterType Type2 { get => type2; set => type2 = value; }
+}
+
+public enum GrowthRate
+{
+    Fast, MediumFast, MediumSlow, Slow 
+}
+
+public enum Stat
+{
+    Attack,
+    Defense,
+    SpAttack,
+    SpDefense,
+    Speed,
+
+    //Not a boostable stat, but attacks that restore HP will be here
+    HP,
+
+    //Not actual stats, but buffs or debuffs for moveAccuracy
+    Accuracy,
+    Evasion
 }
 
 public enum MonsterType

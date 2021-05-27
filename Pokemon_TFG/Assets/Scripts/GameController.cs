@@ -13,8 +13,11 @@ public class GameController : MonoBehaviour
 
     GameState state;
 
+    public static GameController Instance { get; private set; }
+
     private void Awake()
     {
+        Instance = this;
         ConditionsDB.Init();
     }
 
@@ -25,10 +28,9 @@ public class GameController : MonoBehaviour
 
         playerController.OnEnterTrainersView += (Collider2D trainerCollider) =>
         {
-            trainer = trainerCollider.GetComponentInParent<TrainerController>();
+            TrainerController trainer = trainerCollider.GetComponentInParent<TrainerController>();
             if(trainer != null)
             {
-                trainer.OnTrainerBattleStart += StartTrainerBattle;
                 state = GameState.Cutscene;
                 StartCoroutine(trainer.TriggerTrainerBattle(playerController));
             }
@@ -55,15 +57,18 @@ public class GameController : MonoBehaviour
         MonsterParty playerParty = playerController.GetComponent<MonsterParty>();
         Monster wildMonster = FindObjectOfType<MapArea>().GetComponent<MapArea>().GetWildMonster();
 
-        battleSystem.StartBattle(playerParty, wildMonster);
+        Monster wildMonsterCopy = new Monster(wildMonster.BaseMonster, wildMonster.Level);
+
+        battleSystem.StartBattle(playerParty, wildMonsterCopy);
     }
 
-    public void StartTrainerBattle()
+    public void StartTrainerBattle(TrainerController trainer)
     {
-        trainer.OnTrainerBattleStart -= StartTrainerBattle;
         state = GameState.Battle;
         battleSystem.gameObject.SetActive(true);
         worldCamera.gameObject.SetActive(false);
+
+        this.trainer = trainer;
 
         MonsterParty playerParty = playerController.GetComponent<MonsterParty>();
         MonsterParty trainerParty = trainer.GetComponent<MonsterParty>();
@@ -73,6 +78,12 @@ public class GameController : MonoBehaviour
 
     void EndBattle(bool won)
     {
+        if(trainer != null && won)
+        {
+            trainer.BattleLost();
+            trainer = null;
+        }
+
         state = GameState.FreeRoam;
         battleSystem.gameObject.SetActive(false);
         worldCamera.gameObject.SetActive(true);

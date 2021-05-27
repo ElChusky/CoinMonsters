@@ -13,7 +13,6 @@ MonoBehaviour:
   m_Name: Venlesser
   m_EditorClassIdentifier: 
   name: Venlesser
-  id: 300
   sprite: {fileID: 21300000, guid: 55d0a95b1cbbbdf4197c4ab99980f1b5, type: 3}
   type1: 10
   type2: 8
@@ -23,6 +22,9 @@ MonoBehaviour:
   spAttack: 30
   spDefense: 40
   speed: 55
+  catchRate: 255
+  baseExp: 49
+  growthRate: 1
   learnableMoves:
   - move: {fileID: 11400000, guid: 6a85759e749780c41a113d4951507c42, type: 2}
     level: 1

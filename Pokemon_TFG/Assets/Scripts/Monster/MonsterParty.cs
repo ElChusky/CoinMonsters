@@ -22,4 +22,14 @@ public class MonsterParty : MonoBehaviour
         return monsters.Where(x => x.CurrentHP > 0).FirstOrDefault();
     }
 
+    public void AddMonster(Monster newMonster)
+    {
+        if(monsters.Count < 4)
+            monsters.Add(newMonster);
+        else
+        {
+            //TODO: Transfer to PC
+        }
+    }
+
 }

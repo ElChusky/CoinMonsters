@@ -19,6 +19,7 @@ MonoBehaviour:
   accuracy: 100
   alwaysHit: 0
   basePP: 25
+  priority: 0
   moveCategory: 1
   moveEffects:
     boosts: []
@@ -28,6 +29,6 @@ MonoBehaviour:
   - boosts: []
     status: 2
     volatileStatus: 0
-    chance: 100
+    chance: 10
     target: 0
   target: 0

@@ -36,6 +36,8 @@ public class BattleUnit : MonoBehaviour
 
         hud.gameObject.SetActive(true);
         hud.SetData(monster);
+
+        transform.localScale = (isPlayerUnit) ? new Vector3(-1, 1, 1) : new Vector3(1, 1, 1);
         image.color = originalColor;
         PlayEnterAnimation();
     }
@@ -81,5 +83,26 @@ public class BattleUnit : MonoBehaviour
         sequence.Append(image.transform.DOLocalMoveY(originalPos.y - 150f, 0.5f));
         sequence.Join(image.DOFade(0f, 0.5f));
     }
+
+    public IEnumerator PlayCaptureAnimation(GameObject monsterBall)
+    {
+        Sprite originalSprite = monsterBall.GetComponent<SpriteRenderer>().sprite;
+        monsterBall.GetComponent<SpriteRenderer>().sprite = monsterBall.GetComponent<Image>().sprite;
+        Sequence sequence = DOTween.Sequence();
+        sequence.Append(image.DOFade(0, 0.5f));
+        sequence.Join(transform.DOMove(monsterBall.transform.position, 0.5f));
+        sequence.Join(transform.DOScale(new Vector3(0.3f, 0.3f, 1), 0.5f));
+        yield return sequence.WaitForCompletion();
+        monsterBall.GetComponent<SpriteRenderer>().sprite = originalSprite;
+    }
+    public IEnumerator PlayBreakOutAnimation()
+    {
+        Sequence sequence = DOTween.Sequence();
+        sequence.Append(image.DOFade(1, 0.5f));
+        sequence.Join(transform.DOLocalMove(originalPos, 0.5f));
+        sequence.Join(transform.DOScale(new Vector3(1f, 1f, 1f), 0.5f));
+        yield return sequence.WaitForCompletion();
+    }
+
 
 }

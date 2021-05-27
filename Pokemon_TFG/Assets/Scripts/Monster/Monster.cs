@@ -26,30 +26,20 @@ public class Monster
 
     public Monster(BaseMonster baseMonster, int level)
     {
-        this.BaseMonster = baseMonster;
-        this.Level = level;
-        SetIVs();
-        GiveLearntMoves();
-        CalculateStats();
-        currentHP = MaxHp;
+        this.baseMonster = baseMonster;
+        this.level = level;
 
-        StatBoosts = new Dictionary<Stat, int>()
-        {
-            {Stat.Attack, 0},
-            {Stat.Defense, 0},
-            {Stat.SpAttack, 0},
-            {Stat.SpDefense, 0},
-            {Stat.Speed, 0},
-        };
+        Init();
     }
 
     public void Init()
     {
-        this.BaseMonster = baseMonster;
-        this.Level = level;
         learntMoves = new Move[4];
         SetIVs();
         GiveLearntMoves();
+
+        Exp = BaseMonster.GetExpForLevel(level);
+
         CalculateStats();
         currentHP = MaxHp;
 
@@ -182,6 +172,9 @@ public class Monster
     public Queue<string> StatusChanges { get; private set; }
 
     public BaseMonster BaseMonster { get => baseMonster; set => baseMonster = value; }
+
+    public int Exp { get; set; }
+
     public int Level { get => level; set => level = value; }
 
     public int CurrentHP { get => currentHP; set => currentHP = value; }

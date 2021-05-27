@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using DG.Tweening;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -16,6 +17,7 @@ public class BattleHud : MonoBehaviour
     public Sprite freezeSprite;
     public Sprite sleepSprite;
     public HP_Bar_Control hpBar;
+    public GameObject expBar;
     public bool isPlayer;
 
     private Monster monster;
@@ -26,6 +28,7 @@ public class BattleHud : MonoBehaviour
         monsterName.text = monster.BaseMonster.Name;
         monsterLevel.text = monster.Level.ToString();
         hpBar.SetHp((float )monster.CurrentHP / monster.MaxHp);
+        SetExp();
 
         if (isPlayer)
         {
@@ -81,7 +84,31 @@ public class BattleHud : MonoBehaviour
             yield return hpBar.SetHPSmoothly((float)monster.CurrentHP / monster.MaxHp);
             monster.HpChanged = false;
         }
+    }
 
+    public void SetExp()
+    {
+        if (expBar == null) return;
 
+        float normalizedExp = GetNormalizedExp();
+        expBar.transform.localScale = new Vector3(normalizedExp, 1, 1);
+    }
+
+    public IEnumerator SetExpSmoothly()
+    {
+        if (expBar == null) yield break;
+
+        float normalizedExp = GetNormalizedExp();
+        yield return expBar.transform.DOScaleX(normalizedExp, 1.5f).WaitForCompletion();
+    }
+
+    private float GetNormalizedExp()
+    {
+        int currentLevelExp = monster.BaseMonster.GetExpForLevel(monster.Level);
+        int nextLevelExp = monster.BaseMonster.GetExpForLevel(monster.Level + 1);
+
+        float normalizedExp = (float)(monster.Exp - currentLevelExp) / (nextLevelExp - currentLevelExp);
+
+        return Mathf.Clamp01(normalizedExp);
     }
 }
