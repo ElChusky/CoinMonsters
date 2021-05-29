@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using UnityEngine;
 
-public enum GameState { FreeRoam, Battle, Dialog, Cutscene, Paused, Menu, ConfirmOverwrite }
+public enum GameState { FreeRoam, Battle, Dialog, Cutscene, Paused, Menu, ConfirmOverwrite, PartyScreen }
 
 public class GameController : MonoBehaviour
 {
@@ -23,17 +23,28 @@ public class GameController : MonoBehaviour
 
     private MenuController menuController;
     private MenuController confirmOverwriteMenu;
+    private MenuController changeMonsterMenu;
+
+    private int currentMember;
+    private MonsterParty party;
+    private PartyScreen partyScreen;
 
     private void Awake()
     {
         Instance = this;
 
-        menuController = GetComponents<MenuController>().Where(m => m.Menu.name.Equals("Menu")).First();
-        confirmOverwriteMenu = GetComponents<MenuController>().Where(m => m.Menu.name.Equals("ConfirmOverwrite")).First();
-
         ConditionsDB.Init();
         MonstersDB.Init();
         MoveDB.Init();
+
+        menuController = GetComponents<MenuController>().Where(m => m.Menu.name.Equals("Menu")).First();
+        confirmOverwriteMenu = GetComponents<MenuController>().Where(m => m.Menu.name.Equals("ConfirmOverwrite")).First();
+        changeMonsterMenu = GetComponents<MenuController>().Where(m => m.Menu.name.Equals("ChangeMonstersMenu")).First();
+
+        partyScreen = GetComponentInParent<EssentialObjects>().GetComponentInChildren<PartyScreen>(true);
+
+        party = playerController.GetComponent<MonsterParty>();
+
     }
 
     private void Start()
@@ -89,6 +100,9 @@ public class GameController : MonoBehaviour
         } else if(state == GameState.ConfirmOverwrite)
         {
             confirmOverwriteMenu.HandleUpdate();
+        } else if(state == GameState.PartyScreen)
+        {
+            HandlePartyScreenSelection();
         }
 
     }
@@ -163,6 +177,11 @@ public class GameController : MonoBehaviour
         if(selectedItem == 0)
         {
             //Monsters selected
+            currentMember = 0;
+            partyScreen.Init();
+            partyScreen.SetPartyData(party.Monsters);
+            changeMonsterMenu.OpenMenu();
+            state = GameState.PartyScreen;
         } else if(selectedItem == 1)
         {
             //Bag selected
@@ -202,6 +221,34 @@ public class GameController : MonoBehaviour
         if(selectedItem == 0)
             SavingSystem.i.Save("saveSlot1");
         state = GameState.FreeRoam;
+    }
+
+    private void HandlePartyScreenSelection()
+    {
+        if (Input.GetKeyDown(KeyCode.DownArrow))
+            currentMember += 2;
+        else if (Input.GetKeyDown(KeyCode.UpArrow))
+            currentMember -= 2;
+        else if (Input.GetKeyDown(KeyCode.RightArrow))
+            currentMember++;
+        else if (Input.GetKeyDown(KeyCode.LeftArrow))
+            currentMember--;
+
+        currentMember = Mathf.Clamp(currentMember, 0, party.Monsters.Count - 1);
+
+        partyScreen.UpdateMemberSelection(currentMember);
+
+        if (Input.GetKeyDown(KeyCode.Z))
+        {
+            //Highlightear el monstruo seleccionado y cambiarlo por otro
+            Debug.Log("Monster seleccionado");
+
+        }
+        else if (Input.GetKeyDown(KeyCode.X))
+        {
+            changeMonsterMenu.CloseMenu();
+            state = GameState.FreeRoam;
+        }
     }
 
 }

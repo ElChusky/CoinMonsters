@@ -3750,6 +3750,7 @@ GameObject:
   - component: {fileID: 7398591849592941611}
   - component: {fileID: 4135559673928568900}
   - component: {fileID: 4705488446070855053}
+  - component: {fileID: 2001595871976682901}
   m_Layer: 0
   m_Name: GameController
   m_TagString: Untagged
@@ -3786,6 +3787,7 @@ MonoBehaviour:
   playerController: {fileID: 7398591849172570092}
   battleSystem: {fileID: 7398591849563547228}
   worldCamera: {fileID: 7398591849479043489}
+  state: 0
 --- !u!114 &7398591849592941611
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3846,6 +3848,21 @@ MonoBehaviour:
   menu: {fileID: 3568756026630727069}
   highlightedColor: {r: 0.21176471, g: 0.4, b: 0.9529412, a: 1}
   normalColor: {r: 0.09411765, g: 0.09411765, b: 0.09411765, a: 1}
+--- !u!114 &2001595871976682901
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7398591849592941608}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 027f7ac8605562943912e9a742ad4e7b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  menu: {fileID: 1581480238874156770}
+  highlightedColor: {r: 0.21176472, g: 0.40000004, b: 0.95294124, a: 1}
+  normalColor: {r: 0.09411766, g: 0.09411766, b: 0.09411766, a: 1}
 --- !u!1 &7398591849624385321
 GameObject:
   m_ObjectHideFlags: 0
@@ -4428,6 +4445,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5d4c7a03c88b21a41b8774c80d86b055, type: 3}
+--- !u!1 &1581480238874156770 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1433148006156095036, guid: 5d4c7a03c88b21a41b8774c80d86b055,
+    type: 3}
+  m_PrefabInstance: {fileID: 437160743467127006}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &3568756026630727069 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4005916494948037955, guid: 5d4c7a03c88b21a41b8774c80d86b055,

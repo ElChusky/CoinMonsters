@@ -4,12 +4,14 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Tilemaps;
 
 public class PlayerController : MonoBehaviour, ISavable
 {
 
     [SerializeField] new string name;
     [SerializeField] Sprite sprite;
+    [SerializeField] AnimatedTile animatedDoor;
 
     private Vector2 input;
     public GameObject player;
