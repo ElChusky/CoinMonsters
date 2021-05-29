@@ -4,7 +4,7 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - puebloHojaVerde
+  - prueba
   layers:
   - Default
   - TransparentFX
@@ -19,7 +19,7 @@ TagManager:
   - Interactable
   - Player
   - FOV Layer
-  - 
+  - Portal
   - 
   - 
   - 

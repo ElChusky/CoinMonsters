@@ -32,7 +32,7 @@ public class BaseMonster : ScriptableObject
     {
         if(growthRate == GrowthRate.Fast)
         {
-            return 4 * (level * level * level) / 5;
+            return Mathf.FloorToInt(4 * (level * level * level) / 5f);
         }
         else if(growthRate == GrowthRate.MediumFast)
         {
@@ -40,11 +40,11 @@ public class BaseMonster : ScriptableObject
         }
         else if(growthRate == GrowthRate.MediumSlow)
         {
-            return 6 / 5 * (level * level * level) - 15 * (level * level) + 100 * level - 140;
+            return Mathf.FloorToInt((6f / 5f) * (level * level * level) - (15 * (level * level)) + (100 * level) - 140);
         }
         else if(growthRate == GrowthRate.Slow)
         {
-            return (5 * level * level * level) / 4;
+            return Mathf.FloorToInt(5 * level * level * level / 4f);
         }
 
         return -1;

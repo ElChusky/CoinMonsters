@@ -7,6 +7,11 @@ public class Dialog
 {
     [SerializeField] List<string> lines;
 
+    public Dialog(List<string> lines)
+    {
+        this.lines = lines;
+    }
+
     public List<string> Lines
     {
         get { return lines; }

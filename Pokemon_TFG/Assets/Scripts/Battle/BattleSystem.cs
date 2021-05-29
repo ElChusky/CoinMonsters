@@ -16,6 +16,7 @@ public enum BattleState
     Busy,
     BattleOver,
     AboutToUSe,
+    MoveToForget,
 }
 
 public enum BattleAction
@@ -35,6 +36,7 @@ public class BattleSystem : MonoBehaviour
     [SerializeField] Image playerImage;
     [SerializeField] Image trainerImage;
     [SerializeField] GameObject monsterBall;
+    [SerializeField] MoveSelectionUI moveSelectionUI;
 
     public event Action<bool> OnBattleOver;
 
@@ -44,8 +46,10 @@ public class BattleSystem : MonoBehaviour
     private int currentAction;
     private int currentMove;
     private int currentMember;
-    private int escapeAttempts;
+    private int currentMoveToForgetSelection;
 
+    private int escapeAttempts;
+    private Move moveToLearn;
     private bool aboutToUse;
 
     private MonsterParty playerParty;
@@ -68,6 +72,8 @@ public class BattleSystem : MonoBehaviour
         currentMember = 0;
         currentMove = 0;
         aboutToUse = true;
+
+        isTrainerBattle = false;
 
         player = monsterParty.GetComponent<PlayerController>();
         this.playerParty = monsterParty;
@@ -163,6 +169,9 @@ public class BattleSystem : MonoBehaviour
         } else if(state == BattleState.AboutToUSe)
         {
             HandleAboutToUse();
+        } else if(state == BattleState.MoveToForget)
+        {
+            HandleMoveToForgetSelection();
         }
     }
 
@@ -209,10 +218,58 @@ public class BattleSystem : MonoBehaviour
     private IEnumerator AboutToUse(Monster newMonster)
     {
         state = BattleState.Busy;
-        yield return dialogBox.TypeDialog($"{trainer.Name} va a sacar a {newMonster.BaseMonster.Name}. ¿Quieres cambiar de Monstruo?");
+        yield return CoroutineTypeText($"{trainer.Name} va a sacar a {newMonster.BaseMonster.Name}. ¿Quieres cambiar de Monstruo?");
 
         state = BattleState.AboutToUSe;
         dialogBox.EnableChoiceBox(true);
+    }
+
+    private IEnumerator ChooseMoveToForget(Monster monster, Move newMove)
+    {
+        state = BattleState.Busy;
+        yield return CoroutineTypeText($"¿Quieres olvidar un movimiento?");
+
+        moveSelectionUI.gameObject.SetActive(true);
+        moveSelectionUI.SetMoveData(monster.LearntMoves, newMove);
+        moveToLearn = newMove;
+
+        state = BattleState.MoveToForget;
+    }
+
+    private void HandleMoveToForgetSelection()
+    {
+        if (Input.GetKeyDown(KeyCode.UpArrow))
+            currentMoveToForgetSelection--;
+        else if (Input.GetKeyDown(KeyCode.DownArrow))
+            currentMoveToForgetSelection++;
+
+        currentMoveToForgetSelection = Mathf.Clamp(currentMoveToForgetSelection, 0, 4);
+
+        moveSelectionUI.UpdateMoveSelection(currentMoveToForgetSelection);
+
+        if (Input.GetKeyDown(KeyCode.Z))
+        {
+            moveSelectionUI.gameObject.SetActive(false);
+            if(currentMoveToForgetSelection == 4)
+            {
+                //Dont learn new Move
+                StartCoroutine(CoroutineTypeText($"{playerUnit.Monster.BaseMonster.Name} no aprendió {moveToLearn.Name}"));
+            }
+            else
+            {
+                //Forget selected Move and learn the new one
+                Move moveToForget = playerUnit.Monster.LearntMoves[currentMoveToForgetSelection];
+
+                StartCoroutine(CoroutineTypeText($"{playerUnit.Monster.BaseMonster.Name} ha olvidado {moveToForget.Name} y ha aprendido {moveToLearn.Name}"));
+
+                Move toLearnMove = ScriptableObject.CreateInstance<Move>();
+                toLearnMove.SetMoveData(moveToLearn);
+                playerUnit.Monster.LearntMoves[currentMoveToForgetSelection] = toLearnMove;
+            }
+
+            moveToLearn = null;
+            state = BattleState.RunningTurn;
+        }
     }
 
     private void HandleActionSelection()
@@ -705,6 +762,33 @@ public class BattleSystem : MonoBehaviour
             yield return playerUnit.hud.SetExpSmoothly();
 
             //Check Level Up
+            while (playerUnit.Monster.CheckForLevelUp())
+            {
+                playerUnit.hud.SetLevel();
+                yield return CoroutineTypeText($"{playerUnit.Monster.BaseMonster.Name} ha subido al nivel {playerUnit.Monster.Level}.");
+
+                //Try to learn a new move
+                LearnableMove newMove = playerUnit.Monster.GetLearnableMoveAtCurrentLevel();
+                if (newMove != null)
+                {
+                    if(playerUnit.Monster.LearntMoves.Count < 4)
+                    {
+                        playerUnit.Monster.LearnMove(newMove);
+                        yield return CoroutineTypeText($"{playerUnit.Monster.BaseMonster.Name} ha aprendido {newMove.Move.Name}.");
+                        dialogBox.SetMoveNames(playerUnit.Monster.LearntMoves);
+                    }
+                    else
+                    {
+                        yield return CoroutineTypeText($"{playerUnit.Monster.BaseMonster.Name} intenta aprender {newMove.Move.Name}.");
+                        yield return CoroutineTypeText($"Pero no puede aprender mas de 4 movimientos.");
+                        yield return ChooseMoveToForget(playerUnit.Monster, newMove.Move);
+                        yield return new WaitUntil(() => state != BattleState.MoveToForget);
+                        yield return new WaitForSeconds(1f);
+                    }
+                }
+
+                yield return playerUnit.hud.SetExpSmoothly(true);
+            }
             yield return new WaitForSeconds(1f);
         }
 

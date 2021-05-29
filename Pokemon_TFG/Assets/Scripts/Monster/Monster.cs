@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using static BaseMonster;
 
@@ -11,14 +12,14 @@ public class Monster
     [SerializeField] int level;
     private int currentHP;
     private int hpIV, attackIV, defenseIV, spAttackIV, spDefenseIV, speedIV;
-    private Move[] learntMoves;
+    private List<Move> learntMoves;
 
     public Dictionary<Stat, int> Stats { get; private set; }
     public Dictionary<Stat, int> StatBoosts { get; private set; }
-    public StatusCondition Status { get; private set; }
+    public Condition Status { get; private set; }
     public int StatusTime { get; set; }
     public Move CurrentMove { get; set; }
-    public StatusCondition VolatileStatus { get; set; }
+    public Condition VolatileStatus { get; set; }
     public int VolatileStatusTime { get; set; }
     public bool HpChanged { get; set; }
 
@@ -34,7 +35,7 @@ public class Monster
 
     public void Init()
     {
-        learntMoves = new Move[4];
+        learntMoves = new List<Move>();
         SetIVs();
         GiveLearntMoves();
 
@@ -47,6 +48,54 @@ public class Monster
         Status = null;
         VolatileStatus = null;
         StatusChanges = new Queue<string>();
+    }
+
+    public Monster(SavableMonsterData savedData)
+    {
+        BaseMonster = MonstersDB.GetMonsterByName(savedData.name);
+
+        CurrentHP = savedData.currentHP;
+        Level = savedData.level;
+        Exp = savedData.exp;
+
+        HpIV = savedData.hpIV;
+        AttackIV = savedData.attackIV;
+        DefenseIV = savedData.defenseIV;
+        SpAttackIV = savedData.spAttackIV;
+        SpDefenseIV = savedData.spDefenseIV;
+        SpeedIV = savedData.speedIV;
+
+        if (savedData.statusID != null)
+            Status = ConditionsDB.Conditions[savedData.statusID.Value];
+        else
+            Status = null;
+
+        LearntMoves = savedData.moves.Select(s => new Move(s)).ToList();
+
+        CalculateStats();
+        ResetStatBoosts();
+        VolatileStatus = null;
+        StatusChanges = new Queue<string>();
+    }
+
+    public SavableMonsterData GetSavedData()
+    {
+        SavableMonsterData savedData = new SavableMonsterData()
+        {
+            name = baseMonster.Name,
+            currentHP = CurrentHP,
+            level = Level,
+            hpIV = HpIV,
+            attackIV = AttackIV,
+            defenseIV = HpIV,
+            spAttackIV = SpAttackIV,
+            spDefenseIV = SpDefenseIV,
+            speedIV = SpeedIV,
+            exp = Exp,
+            statusID = Status?.ID,
+            moves = LearntMoves.Select(m => m.GetSavedData()).ToList()
+        };
+        return savedData;
     }
 
     private void CalculateStats()
@@ -179,7 +228,7 @@ public class Monster
 
     public int CurrentHP { get => currentHP; set => currentHP = value; }
 
-    public Move[] LearntMoves { get => learntMoves; set => learntMoves = value; }
+    public List<Move> LearntMoves { get => learntMoves; set => learntMoves = value; }
 
     #region Pokemon IV
     public int HpIV { get => hpIV; set => hpIV = value; }
@@ -189,6 +238,32 @@ public class Monster
     public int SpDefenseIV { get => spDefenseIV; set => spDefenseIV = value; }
     public int SpeedIV { get => speedIV; set => speedIV = value; }
     #endregion
+
+    public bool CheckForLevelUp()
+    {
+        if(Exp > baseMonster.GetExpForLevel(Level + 1))
+        {
+            level++;
+            return true;
+        }
+
+        return false;
+    }
+
+    public LearnableMove GetLearnableMoveAtCurrentLevel()
+    {
+        return baseMonster.LearnableMoves.Where(x => x.Level == level).FirstOrDefault();
+    }
+
+    public void LearnMove(LearnableMove movetoLearn)
+    {
+        if (LearntMoves.Count > 4)
+            return;
+
+        Move newMove = ScriptableObject.CreateInstance<Move>();
+        newMove.SetMoveData(movetoLearn.Move);
+        learntMoves.Add(newMove);
+    }
 
     private void SetIVs()
     {
@@ -204,27 +279,26 @@ public class Monster
     {
         List<LearnableMove> moves = BaseMonster.LearnableMoves;
         
-        int numMoves = 0;
         List<Move> learnableMoves = new List<Move>();
         foreach (LearnableMove move in moves)
         {
             if (move.Level <= level)
             {
                 learnableMoves.Add(move.Move);
-                numMoves++;
             }
         }
-        if (numMoves <= 4)
+        if (learnableMoves.Count <= 4)
         {
             for (int i = 0; i < learnableMoves.Count; i++)
             {
                 learnableMoves[i].CurrentPP = learnableMoves[i].BasePp;
-                learntMoves[i] = learnableMoves[i];
+                learntMoves.Add(learnableMoves[i]);
             }
         }
         else
         {
-            #region Codigo para dar 1 move de cada tipo, y cuando ya se hayan dado, dar en funcion de la stat mas alta hasta 4 moves si se puede. (Echar un ojo y modificar)
+
+            #region Codigo para dar 1 move de cada tipo, y cuando ya se hayan dado, dar en funcion de la stat mas alta hasta 4 moves si se puede. Comentar y descomentar el otro para cambiarlo
 
             bool tieneFisico = false, tieneEspecial = false, tieneStatus = false;
             //With this loop we give 1 attack of each type, physical dmg, special dmg and status move if there are any
@@ -232,38 +306,19 @@ public class Monster
             {
                 if (currentMove._MoveCategory == MoveCategory.Physical && !tieneFisico)
                 {
-                    for (int i = 0; i < this.learntMoves.Length; i++)
-                    {
-                        if (this.learntMoves[i] == null)
-                        {
-                            this.learntMoves[i] = currentMove;
-                            tieneFisico = true;
-                            break;
-                        }
-                    }
+                    learntMoves.Add(currentMove);
+                    tieneFisico = true;
+
                 }
                 else if (currentMove._MoveCategory == MoveCategory.Special && !tieneEspecial)
                 {
-                    for (int i = 0; i < this.learntMoves.Length; i++)
-                    {
-                        if (this.learntMoves[i] == null)
-                        {
-                            this.learntMoves[i] = currentMove;
-                            tieneEspecial = true;
-                            break;
-                        }
-                    }
+                    learntMoves.Add(currentMove);
+                    tieneEspecial = true;
                 }
                 else if (currentMove._MoveCategory == MoveCategory.Status && !tieneStatus)
                 {
-                    for (int i = 0; i < this.learntMoves.Length; i++)
-                    {
-                        if (this.learntMoves[i] == null)
-                        {
-                            this.learntMoves[i] = currentMove;
-                            tieneStatus = true;
-                        }
-                    }
+                    learntMoves.Add(currentMove);
+                    tieneStatus = true;
                 }
                 if (tieneFisico && tieneEspecial && tieneStatus)
                 {
@@ -272,39 +327,56 @@ public class Monster
             }
             //Now we will check which base stat of the pokemon is higher, so we choose to give another physical dmg move (attack higher),
             //another special dmg move (sp attack higher) or another status move (hp, defense or sp defense higher)
-            for (int higherStat = 0; higherStat < this.learntMoves.Length; higherStat++)
+            MoveCategory prevDamageClass = MoveCategory.None;
+            for (int higherStat = 0; higherStat < 5; higherStat++)
             {
                 MoveCategory damageClass = MoveCategorySearch(higherStat);
+
+                if(prevDamageClass != MoveCategory.None && damageClass == prevDamageClass)
+                {
+                    continue;
+                }
+
+                prevDamageClass = damageClass;
+
                 for (int index = 0; index < learnableMoves.Count; index++)
                 {
                     Move currentMove = learnableMoves[index];
                     if (currentMove._MoveCategory == damageClass)
                     {
                         bool learnt = false;
-                        for (int i = 0; i < this.learntMoves.Length; i++)
+                        for (int i = 0; i < learntMoves.Count; i++)
                         {
-                            if (this.learntMoves[i] == null && !learnt)
+                            if (currentMove.Equals(learntMoves[i]))
                             {
-                                this.learntMoves[i] = currentMove;
-                                index = moves.Count;
-                                if (LearntMoves[4] != null)
-                                {
-                                    higherStat = this.learntMoves.Length;
-                                }
+                                learnt = true;
+                                break;
                             }
-                            else
-                            {
-                                if (currentMove.Equals(this.learntMoves[i]))
-                                {
-                                    learnt = true;
-                                }
-                            }
+                        }
+                        if (!learnt)
+                        {
+                            learntMoves.Add(currentMove);
+                            break;
                         }
                     }
                 }
-
+                if (learntMoves.Count == 4)
+                    break;
             }
             #endregion
+            /*
+            #region Dar los 4 movimientos de mayor nivel. Comentar y descomentar el otro para cambiarlo.
+            //Reordena la lista en orden contrario al de entrada, es decir, por nivel mas alto. IMPORTANTE introducir los ataques ordenados en Unity
+            learnableMoves.Reverse();
+            foreach (Move move in learnableMoves)
+            {
+                if (learntMoves.Count < 4)
+                    learntMoves.Add(move);
+                else
+                    break;
+            }
+            #endregion
+            */
         }
     }
 
@@ -516,4 +588,16 @@ public class DamageDetails
     public bool Fainted { get; set; }
     public float Critical { get; set; }
     public float TypeEffectiveness { get; set; }
+}
+
+[System.Serializable]
+public class SavableMonsterData
+{
+    public string name;
+    public int currentHP;
+    public int level;
+    public int hpIV, attackIV, defenseIV, spAttackIV, spDefenseIV, speedIV;
+    public int exp;
+    public ConditionID? statusID;
+    public List<SavableMoveData> moves;
 }

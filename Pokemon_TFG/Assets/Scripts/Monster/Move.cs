@@ -33,17 +33,48 @@ public class Move : ScriptableObject
 
     [SerializeField] MoveTarget target;
 
-
-    public Move(string name, string description, MonsterType type, int power, int accuracy, int basePP, MoveCategory moveCategory)
+    public Move(Move move)
     {
-        this.name = name;
-        this.description = description;
-        this.type = type;
-        this.power = power;
-        this.accuracy = accuracy;
-        this.basePP = basePP;
-        this.currentPP = basePP;
-        this.moveCategory = moveCategory;
+        name = move.Name;
+        description = move.Description;
+        type = move.Type;
+        power = move.Power;
+        accuracy = move.accuracy;
+        basePP = move.BasePp;
+        currentPP = basePP;
+        moveCategory = move._MoveCategory;
+    }
+
+    public Move(SavableMoveData savedData)
+    {
+        //We obtain the saved Move
+        Move move = MoveDB.GetMoveByName(savedData.name);
+        //I aisng the stored values from the saved Move to this move
+        SetMoveData(move);
+        //I overwrite the currentPP (which is asigned in previous method with the BasePP value) with the PP from the saved Move
+        CurrentPP = savedData.pp;
+    }
+
+    public SavableMoveData GetSavedData()
+    {
+        SavableMoveData savedData = new SavableMoveData()
+        {
+            name = Name,
+            pp = CurrentPP
+        };
+        return savedData;
+    }
+
+    public void SetMoveData(Move move)
+    {
+        name = move.Name;
+        description = move.Description;
+        type = move.Type;
+        power = move.Power;
+        accuracy = move.accuracy;
+        basePP = move.BasePp;
+        currentPP = basePP;
+        moveCategory = move._MoveCategory;
     }
 
     public string Name { get { return name; } set => name = value; }
@@ -86,7 +117,8 @@ public enum MoveCategory
 {
     Physical,
     Special,
-    Status
+    Status,
+    None
 }
 
 public enum MoveTarget
@@ -125,4 +157,11 @@ public class StatBoost
 {
     public Stat stat;
     public int boost;
+}
+
+[System.Serializable]
+public class SavableMoveData
+{
+    public string name;
+    public int pp;
 }

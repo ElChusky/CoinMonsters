@@ -105,17 +105,14 @@ public class BattleDialogBox : MonoBehaviour
         }
     }
 
-    public void SetMoveNames(Move[] learnedMoves)
+    public void SetMoveNames(List<Move> learnedMoves)
     {
-        for (int i = 0; i < learnedMoves.Length; i++)
+        for (int i = 0; i < moveTexts.Length; i++)
         {
-            if(learnedMoves[i] == null)
-            {
-                moveTexts[i].text = "-";
-            } else
-            {
+            if (i < learnedMoves.Count)
                 moveTexts[i].text = learnedMoves[i].Name;
-            }
+            else
+                moveTexts[i].text = "-";
         }
     }
 }

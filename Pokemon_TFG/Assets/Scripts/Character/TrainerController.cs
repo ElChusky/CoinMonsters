@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TrainerController : MonoBehaviour, Interactable
+public class TrainerController : MonoBehaviour, Interactable, ISavable
 {
     [SerializeField] new string name;
     [SerializeField] Sprite sprite;
@@ -87,6 +87,18 @@ public class TrainerController : MonoBehaviour, Interactable
     {
         fov.gameObject.SetActive(false);
         battleLost = true;
+    }
+
+    public object CaptureState()
+    {
+        return battleLost;
+    }
+
+    public void RestoreState(object state)
+    {
+        battleLost = (bool)state;
+        if (battleLost)
+            fov.gameObject.SetActive(false);
     }
 
     public string Name

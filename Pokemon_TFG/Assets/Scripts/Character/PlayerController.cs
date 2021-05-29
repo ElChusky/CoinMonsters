@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : MonoBehaviour, ISavable
 {
 
     [SerializeField] new string name;
@@ -12,9 +13,6 @@ public class PlayerController : MonoBehaviour
 
     private Vector2 input;
     public GameObject player;
-
-    public event Action OnEncountered;
-    public event Action<Collider2D> OnEnterTrainersView;
 
     private Character character;
 
@@ -63,86 +61,50 @@ public class PlayerController : MonoBehaviour
 
         //Debug.DrawLine(transform.position, interactPos, Color.black, 1f);
 
-        Collider2D interactCollider = Physics2D.OverlapCircle(interactPos, 0.3f, GameLayers.i.InteractableLayer);
+        Collider2D interactCollider = Physics2D.OverlapCircle(interactPos, character.OffsetY, GameLayers.i.InteractableLayer);
 
         if(interactCollider != null)
         {
             //Show dialog
+            character.IsMoving = false;
+            character.IsRunning = false;
+            character.HandleUpdate();
             interactCollider.GetComponent<Interactable>()?.Interact(transform) ;
         }
     }
 
     private void OnMoveOver()
     {
-        CheckIfInTrainersView();
-        CheckForEncounters();
-    }
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position - new Vector3(0, character.OffsetY), 0.2f, GameLayers.i.TriggerableLayers);
 
-    private void CheckForEncounters()
-    {
-        
-        Vector2 playerPos = new Vector2(transform.position.x, transform.position.y - 0.5f);
-        if (Physics2D.OverlapCircle(playerPos, 0.2f, GameLayers.i.LongGrassLayer) != null)
+        foreach (Collider2D collider in colliders)
         {
-            Collider2D[] colliders = new Collider2D[1];
-            Physics2D.OverlapCollider(player.GetComponent<Collider2D>(), new ContactFilter2D().NoFilter(), colliders);
-
-            var enteredGrass = colliders[0].gameObject;
-            MapArea mapArea = enteredGrass.GetComponent<MapArea>();
-
-            float probability = UnityEngine.Random.Range(0.0f, 100.0f);
-
-            float veryCommon = 10 / 187.5f;
-            float common = 8.5f / 187.5f;
-            float semiRare = 6.75f / 187.5f;
-            float rare = 3.33f / 187.5f;
-            float veryRare = 1.25f / 187.5f;
-
-            bool encountered = false;
-
-            if (probability <= veryRare * 100)
+            IPlayerTriggerable triggerable = collider.GetComponent<IPlayerTriggerable>();
+            if (triggerable != null)
             {
-                mapArea.Rarity = 5;
-                encountered = true;
-            } else if(probability <= rare * 100)
-            {
-                mapArea.Rarity = 4;
-                encountered = true;
-
-            } else if(probability <= semiRare * 100)
-            {
-                mapArea.Rarity = 3;
-                encountered = true;
-
-            } else if (probability <= common * 100)
-            {
-                mapArea.Rarity = 2;
-                encountered = true;
-
-            } else if(probability <= veryCommon * 100)
-            {
-                mapArea.Rarity = 1;
-                encountered = true;
-            }
-            if (encountered)
-            {
-                character.Animator.IsMoving = false;
-                character.Animator.IsRunning = false;
-                OnEncountered();
+                triggerable.OnPlayerTriggered(this);
+                break;
             }
         }
     }
 
-    private void CheckIfInTrainersView()
+    public object CaptureState()
     {
-        Vector2 playerPos = new Vector2(transform.position.x, transform.position.y);
-        Collider2D collider = Physics2D.OverlapCircle(playerPos, 0.2f, GameLayers.i.FovLayer);
-        if (collider != null)
+        PlayerSavableData data = new PlayerSavableData()
         {
-            character.Animator.IsMoving = false;
-            character.Animator.IsRunning = false;
-            OnEnterTrainersView?.Invoke(collider);
-        }
+            position = new float[] { transform.position.x, transform.position.y },
+            monsters = GetComponent<MonsterParty>().Monsters.Select(m => m.GetSavedData()).ToList()
+        };
+        return data;
+    }
+
+    public void RestoreState(object state)
+    {
+        //Restore position
+        PlayerSavableData data = (PlayerSavableData)state;
+        transform.position = new Vector3(data.position[0], data.position[1]);
+        //Restore Party
+        GetComponent<MonsterParty>().Monsters = data.monsters.Select(s => new Monster(s)).ToList();
     }
 
     public string Name
@@ -159,5 +121,11 @@ public class PlayerController : MonoBehaviour
     {
         get { return character; }
     }
+}
 
+[System.Serializable]
+public class PlayerSavableData
+{
+    public float[] position;
+    public List<SavableMonsterData> monsters;
 }

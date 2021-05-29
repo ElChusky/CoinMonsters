@@ -16,11 +16,11 @@ public class ConditionsDB
         }
     }
 
-    public static Dictionary<ConditionID, StatusCondition> Conditions { get; set; } = new Dictionary<ConditionID, StatusCondition>()
+    public static Dictionary<ConditionID, Condition> Conditions { get; set; } = new Dictionary<ConditionID, Condition>()
     {
         {
             ConditionID.psn,
-            new StatusCondition(){
+            new Condition(){
                 Name = "Poison", StartMessage= "ha sido envenenado.", OnAfterTurn = (BattleUnit monsterUnit) =>
                 {
                     monsterUnit.Monster.UpdateHP(monsterUnit.Monster.MaxHp / 8);
@@ -31,7 +31,7 @@ public class ConditionsDB
         },
         {
             ConditionID.brn,
-            new StatusCondition(){
+            new Condition(){
                 Name = "Burn", StartMessage= "se ha quemado.", OnAfterTurn = (BattleUnit monsterUnit) =>
                 {
                     monsterUnit.Monster.UpdateHP(monsterUnit.Monster.MaxHp / 16);
@@ -42,7 +42,7 @@ public class ConditionsDB
         },
         {
             ConditionID.par,
-            new StatusCondition(){
+            new Condition(){
                 Name = "Paralisis", StartMessage= "ha sido paralizado.", OnBeforeMove = (BattleUnit monsterUnit) =>
                 {
                     if(Random.Range(1, 5) == 1)
@@ -58,7 +58,7 @@ public class ConditionsDB
         },
         {
             ConditionID.frz,
-            new StatusCondition(){
+            new Condition(){
                 Name = "Freeze", StartMessage= "ha sido congelado.", OnBeforeMove = (BattleUnit monsterUnit) =>
                 {
                     if(Random.Range(1, 5) == 1)
@@ -78,7 +78,7 @@ public class ConditionsDB
         },
         {
             ConditionID.slp,
-            new StatusCondition(){
+            new Condition(){
                 Name = "Sleep", StartMessage= "se ha dormido.", OnStart = (BattleUnit monsterUnit) =>
                 {
                     //Sleep for 1-3 turns
@@ -103,7 +103,7 @@ public class ConditionsDB
         //Volatile Status Condition
         {
             ConditionID.confusion,
-            new StatusCondition(){
+            new Condition(){
                 Name = "Confusion", StartMessage= "ha sido confundido.", OnStart = (BattleUnit monsterUnit) =>
                 {
                     //Confused for 1-4 turns
@@ -139,7 +139,7 @@ public class ConditionsDB
         }
     };
 
-    public static float GetStatusBonus(StatusCondition condition)
+    public static float GetStatusBonus(Condition condition)
     {
         if (condition == null)
             return 1f;

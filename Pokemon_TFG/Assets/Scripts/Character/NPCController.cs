@@ -33,7 +33,7 @@ public class NPCController : MonoBehaviour, Interactable
             StartCoroutine(DialogManager.Instance.ShowDialog(dialog, ()=>
             {
                 idleTimer = 0;
-                state = NPCState.Idle;
+                state = NPCState.Idle;                
             }));
         }
     }
