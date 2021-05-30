@@ -617,7 +617,7 @@ public class BattleSystem : MonoBehaviour
             yield return new WaitForSeconds(1f);
             move.CurrentPP--;
 
-            if (move._MoveCategory == MoveCategory.Status)
+            if (move._MoveCategory == MoveCategory.Estado)
             {
                 yield return RunMoveEffects(move.MoveEffects, sourceUnit, targetUnit, move.Target);
             }

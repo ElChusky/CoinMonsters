@@ -89,24 +89,24 @@ public enum Stat
 
 public enum MonsterType
 {
-    None,
+    Ninguno,
     Normal,
-    Fire,
-    Water,
-    Electric,
-    Grass,
-    Ice,
-    Fighting,
-    Poison,
-    Ground,
-    Flying,
-    Psychic,
-    Bug,
-    Rock,
-    Ghost,
+    Fuego,
+    Agua,
+    Electrico,
+    Planta,
+    Hielo,
+    Lucha,
+    Veneno,
+    Tierra,
+    Volador,
+    Psiquico,
+    Bicho,
+    Roca,
+    Fantasma,
     Dragon,
-    Dark,
-    Steel
+    Siniestro,
+    Acero
 }
 
 public class TypeChart

@@ -49,4 +49,6 @@ public class PartyScreen : MonoBehaviour
         messageText.text = message;
     }
 
+    public PartyMemberUI[] MemberSlots { get { return memberSlots; } }
+
 }

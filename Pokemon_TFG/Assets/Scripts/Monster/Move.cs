@@ -115,10 +115,10 @@ public class LearnableMove
 
 public enum MoveCategory
 {
-    Physical,
-    Special,
-    Status,
-    None
+    Físico,
+    Especial,
+    Estado,
+    Ninguno
 }
 
 public enum MoveTarget

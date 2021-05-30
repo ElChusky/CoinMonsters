@@ -304,18 +304,18 @@ public class Monster
             //With this loop we give 1 attack of each type, physical dmg, special dmg and status move if there are any
             foreach (Move currentMove in learnableMoves)
             {
-                if (currentMove._MoveCategory == MoveCategory.Physical && !tieneFisico)
+                if (currentMove._MoveCategory == MoveCategory.Físico && !tieneFisico)
                 {
                     learntMoves.Add(currentMove);
                     tieneFisico = true;
 
                 }
-                else if (currentMove._MoveCategory == MoveCategory.Special && !tieneEspecial)
+                else if (currentMove._MoveCategory == MoveCategory.Especial && !tieneEspecial)
                 {
                     learntMoves.Add(currentMove);
                     tieneEspecial = true;
                 }
-                else if (currentMove._MoveCategory == MoveCategory.Status && !tieneStatus)
+                else if (currentMove._MoveCategory == MoveCategory.Estado && !tieneStatus)
                 {
                     learntMoves.Add(currentMove);
                     tieneStatus = true;
@@ -327,12 +327,12 @@ public class Monster
             }
             //Now we will check which base stat of the pokemon is higher, so we choose to give another physical dmg move (attack higher),
             //another special dmg move (sp attack higher) or another status move (hp, defense or sp defense higher)
-            MoveCategory prevDamageClass = MoveCategory.None;
+            MoveCategory prevDamageClass = MoveCategory.Ninguno;
             for (int higherStat = 0; higherStat < 5; higherStat++)
             {
                 MoveCategory damageClass = MoveCategorySearch(higherStat);
 
-                if(prevDamageClass != MoveCategory.None && damageClass == prevDamageClass)
+                if(prevDamageClass != MoveCategory.Ninguno && damageClass == prevDamageClass)
                 {
                     continue;
                 }
@@ -382,7 +382,7 @@ public class Monster
 
     private MoveCategory MoveCategorySearch(int highStatPos)
     {
-        MoveCategory moveCategory = MoveCategory.Physical;
+        MoveCategory moveCategory = MoveCategory.Físico;
         string higherStat = "";
         int[] stats = new int[5];
         stats[0] = baseMonster.MaxHp;
@@ -417,19 +417,19 @@ public class Monster
         switch (higherStat)
         {
             case "hp":
-                moveCategory = MoveCategory.Status;
+                moveCategory = MoveCategory.Estado;
                 break;
             case "defense":
-                moveCategory = MoveCategory.Status;
+                moveCategory = MoveCategory.Estado;
                 break;
             case "spdefense":
-                moveCategory = MoveCategory.Status;
+                moveCategory = MoveCategory.Estado;
                 break;
             case "attack":
-                moveCategory = MoveCategory.Physical;
+                moveCategory = MoveCategory.Físico;
                 break;
             case "spattack":
-                moveCategory = MoveCategory.Special;
+                moveCategory = MoveCategory.Especial;
                 break;
         }
 
@@ -455,8 +455,8 @@ public class Monster
         };
 
         //If attack is a special attack, it uses sp attack and sp defense to calculate the dmg, otherwise it uses the normal attack and defense
-        float attack = (move._MoveCategory == MoveCategory.Special) ? attacker.SpAttack : attacker.Attack; 
-        float defense = (move._MoveCategory == MoveCategory.Special) ? SpDefense : Defense;
+        float attack = (move._MoveCategory == MoveCategory.Especial) ? attacker.SpAttack : attacker.Attack; 
+        float defense = (move._MoveCategory == MoveCategory.Especial) ? SpDefense : Defense;
 
         float modifiers = UnityEngine.Random.Range(0.85f, 1f) * typeMultiplier * criticalHit;
 

@@ -5,6 +5,12 @@ using UnityEngine.UI;
 
 public class PartyMemberUI : MonoBehaviour
 {
+    public Sprite burnSprite;
+    public Sprite poisonSprite;
+    public Sprite paralSprite;
+    public Sprite freezeSprite;
+    public Sprite sleepSprite;
+    public Image statusImage;
     public Text monsterName;
     public Text monsterLevel;
     public Text currentHP;
@@ -28,6 +34,38 @@ public class PartyMemberUI : MonoBehaviour
         originalSpriteColor = monsterSprite.color;
         currentHP.text = monster.CurrentHP.ToString() + "/";
         maxHP.text = monster.MaxHp.ToString();
+        SetStatusImage();
+    }
+
+    public void SetStatusImage()
+    {
+        if (monster.Status == null)
+        {
+            statusImage.gameObject.SetActive(false);
+        }
+        else
+        {
+            ConditionID id = monster.Status.ID;
+            switch (id)
+            {
+                case ConditionID.brn:
+                    statusImage.sprite = burnSprite;
+                    break;
+                case ConditionID.psn:
+                    statusImage.sprite = poisonSprite;
+                    break;
+                case ConditionID.par:
+                    statusImage.sprite = paralSprite;
+                    break;
+                case ConditionID.frz:
+                    statusImage.sprite = freezeSprite;
+                    break;
+                case ConditionID.slp:
+                    statusImage.sprite = sleepSprite;
+                    break;
+            }
+            statusImage.gameObject.SetActive(true);
+        }
     }
 
     public void SetSelected(bool selected)

@@ -57,3 +57,6 @@ TagManager:
   - name: Battle
     uniqueID: 3594471797
     locked: 0
+  - name: Canvas UI
+    uniqueID: 2343824733
+    locked: 0

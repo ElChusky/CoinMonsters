@@ -37,11 +37,10 @@ public class MenuController : MonoBehaviour
         {
             //Action
             OnMenuSelected?.Invoke(selectedItem);
-            CloseMenu();
         } else if (Input.GetKeyDown(KeyCode.X))
         {
-            OnBack?.Invoke();
             CloseMenu();
+            OnBack?.Invoke();
         }
 
         UpdateItemSelection();
