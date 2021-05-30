@@ -15,45 +15,59 @@ public class NPCController : MonoBehaviour, Interactable
     private float idleTimer = 0f;
     private int currentPattern = 0;
 
-
-    Character character;
+    private TrainerController trainer;
+    private Character character;
 
     private void Awake()
     {
+        trainer = GetComponent<TrainerController>();
         character = GetComponent<Character>();
         SplitPattern();
     }
 
     public void Interact(Transform initiator)
     {
-        if(state == NPCState.Idle)
+        if (trainer != null)
+            trainer.Interact(initiator);
+        else
         {
-            state = NPCState.Dialog;
-            character.LookTowards(initiator.position);
-            StartCoroutine(DialogManager.Instance.ShowDialog(dialog, ()=>
+            if (state == NPCState.Idle)
             {
-                idleTimer = 0;
-                state = NPCState.Idle;                
-            }));
+                state = NPCState.Dialog;
+                character.LookTowards(initiator.position);
+                StartCoroutine(DialogManager.Instance.ShowDialog(dialog, () =>
+                {
+                    idleTimer = 0;
+                    state = NPCState.Idle;
+                }));
+            }
         }
     }
 
     private void Update()
     {
-        if(state == NPCState.Idle)
+        if(trainer != null)
         {
-            idleTimer += Time.deltaTime;
-            if (idleTimer > timePatterns[currentPattern])
+            currentPattern = (currentPattern + Mathf.Abs(Mathf.FloorToInt(trainer.MovedTiles))) % splittedPatterns.Count;
+            trainer.MovedTiles = 0f;
+        }
+        if (trainer == null || (trainer != null && !trainer.TrainerPerformingAction))
+        {
+            if (state == NPCState.Idle)
             {
-                idleTimer = 0f;
-                if(splittedPatterns.Count > 0)
+                idleTimer += Time.deltaTime;
+                if (idleTimer > timePatterns[currentPattern])
                 {
-                    StartCoroutine(Walk());
+                    idleTimer = 0f;
+                    if (splittedPatterns.Count > 0)
+                    {
+                        StartCoroutine(Walk());
+                    }
                 }
             }
-        }
 
-        character.HandleUpdate();
+            character.HandleUpdate();
+        }
     }
 
     private void SplitPattern()

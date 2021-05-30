@@ -14,8 +14,8 @@ public class GameController : MonoBehaviour
     [SerializeField] Camera worldCamera;
     [SerializeField] MonsterSummaryMenu summaryMenu;
 
-    public GameState state;
-    GameState prevState;
+    private GameState state;
+    private GameState prevState;
 
     public SceneDetails CurrentScene { get; private set; }
     public SceneDetails PreviousScene { get; private set; }
@@ -62,7 +62,9 @@ public class GameController : MonoBehaviour
         DialogManager.Instance.OnCloseDialog += () =>
         {
             if (state == GameState.Dialog)
+            {
                 state = GameState.FreeRoam;
+            }
         };
 
         menu.OnBack += () =>
@@ -111,12 +113,10 @@ public class GameController : MonoBehaviour
                 playerController.Character.HandleUpdate();
             }
 
-        }
-        else if (state == GameState.Battle)
+        } else if (state == GameState.Battle)
         {
             battleSystem.HandleUpdate();
-        }
-        else if (state == GameState.Dialog)
+        } else if (state == GameState.Dialog)
         {
             DialogManager.Instance.HandleUpdate();
         } else if(state == GameState.Menu)
@@ -135,7 +135,6 @@ public class GameController : MonoBehaviour
         {
             summaryMenu.HandleUpdate();
         }
-
     }
 
     public void PauseGame(bool pause)
@@ -146,7 +145,9 @@ public class GameController : MonoBehaviour
             state = GameState.Paused;
         }
         else
+        {
             state = prevState;
+        }
     }
 
     public void StartBattle(MapArea mapArea)
@@ -246,9 +247,11 @@ public class GameController : MonoBehaviour
             //Salir
             menu.CloseMenu();
         }
-        
-        if(prevState == state) //Means that we havent stepped in ConfirmOverwrite
+     
+        if (prevState == state)//Means that we havent stepped in ConfirmOverwrite
+        {
             state = GameState.FreeRoam;
+        }
     }
 
     private void OnConfirmMenuSelected(int selectedItem)

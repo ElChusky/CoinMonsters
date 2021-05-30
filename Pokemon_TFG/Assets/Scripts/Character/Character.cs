@@ -29,7 +29,7 @@ public class Character : MonoBehaviour
         transform.position = pos;
     }
 
-    public IEnumerator Move(Vector2 moveVector, bool isPlayer, Action OnMoveOver = null, Action OnWhileMove = null)
+    public IEnumerator Move(Vector2 moveVector, bool isPlayer, Action OnMoveOver = null)
     {
         animator.MoveX = Mathf.Clamp(moveVector.x, -1f, 1f);
         animator.MoveY = Mathf.Clamp(moveVector.y, -1f, 1f);
@@ -53,7 +53,6 @@ public class Character : MonoBehaviour
             if (animator.IsRunning)
                 speed = runSpeed;
             transform.position = Vector3.MoveTowards(transform.position, targetPos, speed * Time.deltaTime);
-            OnWhileMove?.Invoke();
             yield return null;
         }
         transform.position = targetPos;
