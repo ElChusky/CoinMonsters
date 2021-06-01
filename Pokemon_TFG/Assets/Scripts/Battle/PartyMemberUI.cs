@@ -20,7 +20,9 @@ public class PartyMemberUI : MonoBehaviour
     public Image monsterSprite;
 
     public Color highlightedColor;
+    public Color deadColor;
     private Color originalSpriteColor;
+    private Color originalColor;
 
     private Monster monster;
 
@@ -32,6 +34,7 @@ public class PartyMemberUI : MonoBehaviour
         hpBar.SetHp((float)monster.CurrentHP / monster.MaxHp);
         monsterSprite.sprite = monster.BaseMonster.Sprite;
         originalSpriteColor = monsterSprite.color;
+        originalColor = gameObject.GetComponent<Image>().color;
         currentHP.text = monster.CurrentHP.ToString() + "/";
         maxHP.text = monster.MaxHp.ToString();
         SetStatusImage();
@@ -79,12 +82,12 @@ public class PartyMemberUI : MonoBehaviour
         {
             if(monster.CurrentHP <= 0)
             {
-                gameObject.GetComponent<Image>().color = new Color(Color.red.r, Color.red.g, Color.red.b, 226);
-                monsterSprite.color = new Color(Color.red.r, Color.red.g, Color.red.b, 226);
+                gameObject.GetComponent<Image>().color = deadColor;
+                monsterSprite.color = deadColor;
             }
             else
             {
-                gameObject.GetComponent<Image>().color = new Color(Color.white.r, Color.white.g, Color.white.b, 226);
+                gameObject.GetComponent<Image>().color = originalColor;
                 monsterSprite.color = originalSpriteColor;
             }
         }

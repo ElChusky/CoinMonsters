@@ -369,7 +369,7 @@ RectTransform:
   m_GameObject: {fileID: 2475136337154084040}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.0001999, y: 1.0001999, z: 1.0001999}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1279624767577858323}
   - {fileID: 9202026847322169064}
@@ -454,6 +454,7 @@ MonoBehaviour:
   hpBar: {fileID: 3501349393194837815}
   monsterSprite: {fileID: 3527699619572022267}
   highlightedColor: {r: 0.32941177, g: 0.65882355, b: 0.98039216, a: 1}
+  deadColor: {r: 1, g: 0.4569893, b: 0.4470588, a: 1}
 --- !u!1 &3191485490447955802
 GameObject:
   m_ObjectHideFlags: 0
@@ -582,7 +583,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -139.9, y: -0.0000019073}
+  m_AnchoredPosition: {x: -130.2, y: -0.0000019073}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7255203752701039188

@@ -17,4 +17,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Town2.unity
     guid: 9fda5e6d7f4640545921bab8e3071eb8
+  - enabled: 1
+    path: Assets/Scenes/Home2F.unity
+    guid: de0c26cd20a7b87468cd29743bba31a1
   m_configObjects: {}

@@ -37,8 +37,7 @@ public class Character : MonoBehaviour
         Vector3 targetPos = transform.position;
         targetPos.x += moveVector.x;
         targetPos.y += moveVector.y;
-
-        if (!IsPathClear(targetPos))
+        if (!IsWalkable(targetPos))
         {
             yield break;
         }
@@ -69,11 +68,10 @@ public class Character : MonoBehaviour
         animator.IsRunning = IsRunning;
     }
 
-    private bool IsPathClear(Vector3 targetPos)
+    private bool IsWalkable(Vector3 targetPos)
     {
-        Vector3 diffVector = (targetPos - transform.position);
+        Vector3 diffVector = targetPos - transform.position;
         Vector3 dirVector = diffVector.normalized;
-
         if(Physics2D.BoxCast(transform.position + dirVector, new Vector2(0.2f, 0.2f), 0f, dirVector, diffVector.magnitude - 1,
             GameLayers.i.SolidObjectsLayer | GameLayers.i.InteractableLayer | GameLayers.i.PlayerLayer))
         {

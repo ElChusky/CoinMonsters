@@ -25,7 +25,7 @@ public class NPCController : MonoBehaviour, Interactable
         SplitPattern();
     }
 
-    public void Interact(Transform initiator)
+    public virtual void Interact(Transform initiator)
     {
         if (trainer != null)
             trainer.Interact(initiator);
@@ -46,14 +46,9 @@ public class NPCController : MonoBehaviour, Interactable
 
     private void Update()
     {
-        if(trainer != null)
-        {
-            currentPattern = (currentPattern + Mathf.Abs(Mathf.FloorToInt(trainer.MovedTiles))) % splittedPatterns.Count;
-            trainer.MovedTiles = 0f;
-        }
         if (trainer == null || (trainer != null && !trainer.TrainerPerformingAction))
         {
-            if (state == NPCState.Idle)
+            if (state == NPCState.Idle && movementPatterns.Count != 0)
             {
                 idleTimer += Time.deltaTime;
                 if (idleTimer > timePatterns[currentPattern])
@@ -79,13 +74,13 @@ public class NPCController : MonoBehaviour, Interactable
             {
                 Vector2 move = new Vector2(pattern.Walk.x / Mathf.Abs(pattern.Walk.x), 0);
                 splittedPatterns.Add(move);
-                timePatterns.Add(0);
+                timePatterns.Add(0f);
             }
             for (int i = 0; i < Mathf.Abs(pattern.Walk.y); i++)
             {
                 Vector2 move = new Vector2(0, pattern.Walk.y / Mathf.Abs(pattern.Walk.y));
                 splittedPatterns.Add(move);
-                timePatterns.Add(0);
+                timePatterns.Add(0f);
             }
             timePatterns.RemoveAt(timePatterns.Count - 1);
         }
@@ -104,6 +99,9 @@ public class NPCController : MonoBehaviour, Interactable
 
         state = NPCState.Idle;
     }
+
+    public Character Character { get { return character; } set { character = value; } }
+
 }
 
 public enum NPCState { Idle, Walking, Running, Dialog}
@@ -114,7 +112,7 @@ public class WalkPattern
     [SerializeField] Vector2 walk;
     [SerializeField] float time;
 
-    public Vector2 Walk { get { return walk; } }
-    public float Time { get { return time; } }
+    public Vector2 Walk { get { return walk; } set { walk = value; } }
+    public float Time { get { return time; } set { time = value; } }
 
 }

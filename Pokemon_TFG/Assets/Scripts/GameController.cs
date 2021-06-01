@@ -184,6 +184,12 @@ public class GameController : MonoBehaviour
         StartCoroutine(trainer.TriggerTrainerBattle(playerController));
     }
 
+    public void OnEnterMotherActivator(MotherNPC mother)
+    {
+        state = GameState.Cutscene;
+        StartCoroutine(mother.OnActivatorTriggered(playerController));
+    }
+
     void EndBattle(bool won)
     {
         if(trainer != null && won)

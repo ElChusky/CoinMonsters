@@ -34,6 +34,8 @@ public class TrainerController : MonoBehaviour, Interactable, ISavable
         {
             TrainerPerformingAction = true;
 
+            fov.GetComponent<TrainerFov>().AudioManager.ChangeMusic(fov.GetComponent<TrainerFov>().TrainerMusic);
+
             StartCoroutine(DialogManager.Instance.ShowDialog(dialog, () =>
             {
                 GameController.Instance.StartTrainerBattle(this);
@@ -61,11 +63,6 @@ public class TrainerController : MonoBehaviour, Interactable, ISavable
         Vector2 diff = player.transform.position - transform.position;
         Vector2 moveVector = diff - diff.normalized;
         moveVector = new Vector2(Mathf.Round(moveVector.x), Mathf.Round(moveVector.y));
-
-        if (Mathf.Abs(moveVector.x) > Mathf.Abs(moveVector.y))
-            MovedTiles = moveVector.x;
-        else
-            MovedTiles = moveVector.y;
 
         yield return character.Move(moveVector, false);
 
@@ -95,6 +92,7 @@ public class TrainerController : MonoBehaviour, Interactable, ISavable
 
     public void BattleLost()
     {
+        StartCoroutine(DialogManager.Instance.ShowDialog(dialogAfterLost));
         fov.gameObject.SetActive(false);
         battleLost = true;
     }
@@ -117,8 +115,6 @@ public class TrainerController : MonoBehaviour, Interactable, ISavable
     }
 
     public bool TrainerPerformingAction { get; private set; }
-
-    public float MovedTiles { get; set; } = 0;
 
     public Sprite Sprite
     {

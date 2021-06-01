@@ -8,15 +8,24 @@ public class SceneDetails : MonoBehaviour
 {
 
     [SerializeField] List<SceneDetails> connectedScenes;
+    [SerializeField] AudioClip sceneMusic;
+
+    private AudioManager audioManager;
 
     public bool IsLoaded { get; private set; }
 
     private List<SavableEntity> savableEntities;
 
+    private void Start()
+    {
+        audioManager = FindObjectOfType<AudioManager>();
+    }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if(collision.CompareTag("Player"))
         {
+            audioManager.ChangeMusic(sceneMusic);
             //Monstrar un cartel de entrada a la ruta/ciudad
             Debug.Log($"{collision.gameObject.name} ha entrado en {gameObject.name}.");
 

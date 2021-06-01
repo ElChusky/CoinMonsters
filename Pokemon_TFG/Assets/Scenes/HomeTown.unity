@@ -49297,6 +49297,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 4287224813213370770, guid: 2c8c2763c4a099d41b6429ed6cd9c540,
+        type: 3}
+      propertyPath: newMusic
+      value: 
+      objectReference: {fileID: 8300000, guid: c7bd3f612533f8d44bcf1fbec5300b13, type: 3}
     - target: {fileID: 4287224813560317526, guid: 2c8c2763c4a099d41b6429ed6cd9c540,
         type: 3}
       propertyPath: m_Name
