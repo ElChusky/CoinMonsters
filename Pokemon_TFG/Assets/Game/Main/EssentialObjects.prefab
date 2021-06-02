@@ -115,10 +115,11 @@ AudioSource:
   m_GameObject: {fileID: 698987792389948251}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: 24300002, guid: 73affaacdfa9d03419bc16ace18a3ac6,
+    type: 2}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 1
-  m_Volume: 0.1
+  m_Volume: 1
   m_Pitch: 1
   Loop: 1
   Mute: 0
@@ -2048,7 +2049,7 @@ GameObject:
   - component: {fileID: 7398591848239640437}
   - component: {fileID: 7398591848239640436}
   m_Layer: 5
-  m_Name: BagText
+  m_Name: CaptureText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2113,9 +2114,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Mochila
-
-'
+  m_Text: Capturar
 --- !u!1 &7398591848324293978
 GameObject:
   m_ObjectHideFlags: 0
@@ -3511,7 +3510,7 @@ GameObject:
   - component: {fileID: 7398591849023666579}
   - component: {fileID: 7398591849023666578}
   m_Layer: 5
-  m_Name: PokemonText
+  m_Name: MonstersText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4727,6 +4726,7 @@ MonoBehaviour:
   battleSystem: {fileID: 7398591849563547228}
   worldCamera: {fileID: 6018397112014848030}
   summaryMenu: {fileID: 3260399253912968809}
+  prevMusic: {fileID: 0}
 --- !u!114 &3625663651385264347
 MonoBehaviour:
   m_ObjectHideFlags: 0

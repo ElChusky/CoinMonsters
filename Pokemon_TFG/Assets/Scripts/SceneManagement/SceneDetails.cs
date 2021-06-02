@@ -27,7 +27,6 @@ public class SceneDetails : MonoBehaviour
         {
             audioManager.ChangeMusic(sceneMusic);
             //Monstrar un cartel de entrada a la ruta/ciudad
-            Debug.Log($"{collision.gameObject.name} ha entrado en {gameObject.name}.");
 
             LoadScene();
             GameController.Instance.SetCurrentScene(this);

@@ -41,6 +41,19 @@ public class BattleHud : MonoBehaviour
         monster.OnStatusChanged += SetStatusImage;
     }
 
+    public void UpdateHud()
+    {
+        monsterName.text = monster.BaseMonster.Name;
+        SetLevel();
+        StartCoroutine(UpdateHP());
+
+        if (isPlayer)
+        {
+            currentHP.text = monster.CurrentHP.ToString();
+            maxHP.text = monster.MaxHp.ToString();
+        }
+    }
+
     public void SetStatusImage()
     {
         if(monster.Status == null)

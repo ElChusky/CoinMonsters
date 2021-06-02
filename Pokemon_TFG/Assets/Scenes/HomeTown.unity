@@ -48894,6 +48894,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cffae2799d43cbd468922e94361d1723, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  newMusic: {fileID: 8300000, guid: 24dc1269b3eeb7e42aa8ca43ee57c255, type: 3}
 --- !u!1 &2068452893
 GameObject:
   m_ObjectHideFlags: 0

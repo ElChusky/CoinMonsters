@@ -30,6 +30,11 @@ public class GameController : MonoBehaviour
     private int currentMember;
     private MonsterParty party;
     private PartyScreen partyScreen;
+    private Fader fader;
+    private AudioManager audioManager;
+
+    public AudioClip prevMusic;
+    public Vector2 LastHealPosition { get; set; }
 
     private void Awake()
     {
@@ -47,6 +52,10 @@ public class GameController : MonoBehaviour
         partyScreen = GetComponentInParent<EssentialObjects>().GetComponentInChildren<PartyScreen>(true);
 
         party = playerController.GetComponent<MonsterParty>();
+
+        fader = FindObjectOfType<Fader>();
+
+        audioManager = FindObjectOfType<AudioManager>();
 
     }
 
@@ -150,8 +159,15 @@ public class GameController : MonoBehaviour
         }
     }
 
+    private IEnumerator FadeOutStartBattle()
+    {
+        PauseGame(false);
+        yield return fader.FadeOut(0.5f);
+    }
+
     public void StartBattle(MapArea mapArea)
     {
+        StartCoroutine(FadeOutStartBattle());
         state = GameState.Battle;
         battleSystem.gameObject.SetActive(true);
         worldCamera.gameObject.SetActive(false);
@@ -190,17 +206,53 @@ public class GameController : MonoBehaviour
         StartCoroutine(mother.OnActivatorTriggered(playerController));
     }
 
+    private IEnumerator EndBattleCutscene()
+    {
+        yield return fader.FadeIn(0f);
+        PauseGame(true);
+        yield return fader.FadeOut(1f);
+        PauseGame(false);
+        state = GameState.FreeRoam;
+    }
+
     void EndBattle(bool won)
     {
-        if(trainer != null && won)
+        audioManager.ChangeMusic(prevMusic);
+
+        if (!won)
         {
-            trainer.BattleLost();
+            HealingParty.HealAfterDeath(playerController);
+            StartCoroutine(Teleport(LastHealPosition));
+        }
+
+
+        if (trainer != null)
+        {
+            trainer.EndBattle(won);
             trainer = null;
+            StartCoroutine(EndBattleCutscene());
         }
 
         state = GameState.FreeRoam;
         battleSystem.gameObject.SetActive(false);
         worldCamera.gameObject.SetActive(true);
+
+    }
+
+    private IEnumerator Teleport(Vector2 newPosition)
+    {
+
+        yield return fader.InstantFadeIn();
+
+        PauseGame(true);
+
+        playerController.Character.SetPositionAndSnapToTile(newPosition);
+
+        yield return fader.FadeOut(0.5f);
+
+        PauseGame(false);
+
+        state = GameState.FreeRoam;
     }
 
     public void SetCurrentScene(SceneDetails currScene)

@@ -4719,6 +4719,7 @@ MonoBehaviour:
     - "\xA1A esos desgraciados les encanta el dinero! Si te descuidas te roban."
   dialogAfterGiveMonster:
     lines:
+    - Tu madre ha curado a tus Monstruos.
     - Recuerda. Ten cuiado con los Youtubers y Streamers.
     - "Si te encuentras a alguno, asegurate de explicarle por que se tiene que quedar
       a tributar en Espa\xF1a."
@@ -4742,6 +4743,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   uniqueId: 7a7ba383-31ab-4224-8df4-880c82cf1045
+--- !u!114 &917857528
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 917857524}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f820d8538d17fe4489c224518e149cd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &978157278
 GameObject:
   m_ObjectHideFlags: 0

@@ -8,6 +8,7 @@ public class NPCController : MonoBehaviour, Interactable
 
     [SerializeField] Dialog dialog;
     [SerializeField] List<WalkPattern> movementPatterns;
+    public bool patternFinished;
     private List<Vector2> splittedPatterns = new List<Vector2>();
     private List<float> timePatterns = new List<float>();
 
@@ -90,14 +91,20 @@ public class NPCController : MonoBehaviour, Interactable
     {
         state = NPCState.Walking;
 
+        patternFinished = false;
+
         Vector3 oldPos = transform.position;
 
         yield return character.Move(splittedPatterns[currentPattern], false);
 
         if(transform.position != oldPos)
+        {
             currentPattern = (currentPattern + 1) % splittedPatterns.Count;
+        }
 
         state = NPCState.Idle;
+
+        patternFinished = true;
     }
 
     public Character Character { get { return character; } set { character = value; } }

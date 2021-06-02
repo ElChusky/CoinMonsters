@@ -98,6 +98,18 @@ public class Monster
         return savedData;
     }
 
+    public void HealMonster()
+    {
+        currentHP = MaxHp;
+        CureStatus();
+
+        foreach (Move move in learntMoves)
+        {
+            move.CurrentPP = move.BasePp;
+        }
+
+    }
+
     private void CalculateStats()
     {
         Stats = new Dictionary<Stat, int>();
@@ -244,6 +256,11 @@ public class Monster
         if(Exp > baseMonster.GetExpForLevel(Level + 1))
         {
             level++;
+            int currentMaxHp = MaxHp;
+            CalculateStats();
+            int afterLvlUpHP = MaxHp;
+            currentHP += (afterLvlUpHP - currentMaxHp);
+            HpChanged = true;
             return true;
         }
 
@@ -297,9 +314,9 @@ public class Monster
         }
         else
         {
-
+            
             #region Codigo para dar 1 move de cada tipo, y cuando ya se hayan dado, dar en funcion de la stat mas alta hasta 4 moves si se puede. Comentar y descomentar el otro para cambiarlo
-
+            /*
             bool tieneFisico = false, tieneEspecial = false, tieneStatus = false;
             //With this loop we give 1 attack of each type, physical dmg, special dmg and status move if there are any
             foreach (Move currentMove in learnableMoves)
@@ -363,8 +380,8 @@ public class Monster
                 if (learntMoves.Count == 4)
                     break;
             }
+            */
             #endregion
-            /*
             #region Dar los 4 movimientos de mayor nivel. Comentar y descomentar el otro para cambiarlo.
             //Reordena la lista en orden contrario al de entrada, es decir, por nivel mas alto. IMPORTANTE introducir los ataques ordenados en Unity
             learnableMoves.Reverse();
@@ -376,7 +393,6 @@ public class Monster
                     break;
             }
             #endregion
-            */
         }
     }
 
@@ -467,6 +483,8 @@ public class Monster
 
         if (CurrentHP < damage)
             damage = CurrentHP;
+
+        Debug.Log($"{attacker.BaseMonster.Name}'s Attack at level {attacker.Level} = {attacker.Attack}");
 
         UpdateHP(damage);
 

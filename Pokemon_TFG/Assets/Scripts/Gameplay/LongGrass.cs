@@ -4,6 +4,17 @@ using UnityEngine;
 
 public class LongGrass : MonoBehaviour, IPlayerTriggerable
 {
+
+    private AudioManager audioManager;
+    private Fader fader;
+    [SerializeField] AudioClip newMusic;
+
+    private void Start()
+    {
+        audioManager = FindObjectOfType<AudioManager>();
+        fader = FindObjectOfType<Fader>();
+    }
+
     public void OnPlayerTriggered(PlayerController player)
     {
         MapArea mapArea = GetComponent<MapArea>();
@@ -50,7 +61,20 @@ public class LongGrass : MonoBehaviour, IPlayerTriggerable
         {
             player.Character.Animator.IsMoving = false;
             player.Character.Animator.IsRunning = false;
-            GameController.Instance.StartBattle(mapArea);
+            StartCoroutine(StartBattle(mapArea));
         }
+    }
+
+    private IEnumerator StartBattle(MapArea mapArea)
+    {
+        GameController.Instance.prevMusic = audioManager.audioSource.clip;
+
+        audioManager.ChangeMusic(newMusic);
+
+        GameController.Instance.PauseGame(true);
+
+        yield return fader.FadeIn(0.5f);
+
+        GameController.Instance.StartBattle(mapArea);
     }
 }

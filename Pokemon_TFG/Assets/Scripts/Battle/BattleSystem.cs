@@ -55,15 +55,16 @@ public class BattleSystem : MonoBehaviour
     private MonsterParty playerParty;
     private MonsterParty trainerParty;
     private Monster wildMonster;
+    private Fader fader;
 
     private bool isTrainerBattle = false;
     PlayerController player;
     TrainerController trainer;
 
-    private IEnumerator CoroutineTypeText(string text)
+    private IEnumerator CoroutineTypeText(string text, float time = 0.5f)
     {
         yield return dialogBox.TypeDialog(text);
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(time);
     }
 
     public void StartBattle(MonsterParty monsterParty, Monster wildMonster)
@@ -79,6 +80,11 @@ public class BattleSystem : MonoBehaviour
         this.playerParty = monsterParty;
         this.wildMonster = wildMonster;
         StartCoroutine(SetupBattle());
+    }
+
+    private void Start()
+    {
+        fader = FindObjectOfType<Fader>();
     }
 
     public void StartTrainerBattle(MonsterParty monsterParty, MonsterParty trainerParty)
@@ -147,6 +153,8 @@ public class BattleSystem : MonoBehaviour
 
         }
 
+        yield return CoroutineTypeText("¿Que debería hacer " + playerUnit.Monster.BaseMonster.Name + "?", 0f);
+
         escapeAttempts = 0;
         partyScreen.Init();
 
@@ -178,6 +186,7 @@ public class BattleSystem : MonoBehaviour
     private void BattleOver(bool won)
     {
         state = BattleState.BattleOver;
+
         playerParty.Monsters.ForEach(m => m.OnBattleOver());
 
         dialogBox.EnableActionSelector(false);
@@ -209,8 +218,6 @@ public class BattleSystem : MonoBehaviour
 
         dialogBox.EnableMoveSelector(false);
         dialogBox.EnableDialogText(true);
-
-        StartCoroutine(CoroutineTypeText("¿Que debería hacer " + playerUnit.Monster.BaseMonster.Name + "?"));
 
         dialogBox.EnableActionSelector(true);
     }
@@ -322,6 +329,7 @@ public class BattleSystem : MonoBehaviour
                     StartCoroutine(RunTurns(BattleAction.Run));
                     break;
             }
+            dialogBox.EnableActionSelector(false);
         }
     }
 
@@ -446,7 +454,11 @@ public class BattleSystem : MonoBehaviour
                 StartCoroutine(SendNextTrainerMonster());
             }
             else
+            {
+                StartCoroutine(CoroutineTypeText("¿Que debería hacer " + playerUnit.Monster.BaseMonster.Name + "?", 0f));
+
                 ActionSelection();
+            }
         }
     }
 
@@ -585,7 +597,10 @@ public class BattleSystem : MonoBehaviour
             if (state == BattleState.BattleOver) yield break;
         }
         if (state != BattleState.BattleOver)
+        {
+            yield return CoroutineTypeText("¿Que debería hacer " + playerUnit.Monster.BaseMonster.Name + "?", 0f);
             ActionSelection();
+        }
     }
 
     private IEnumerator RunMove(BattleUnit sourceUnit, BattleUnit targetUnit, Move move)
@@ -764,7 +779,7 @@ public class BattleSystem : MonoBehaviour
             //Check Level Up
             while (playerUnit.Monster.CheckForLevelUp())
             {
-                playerUnit.hud.SetLevel();
+                playerUnit.hud.UpdateHud();
                 yield return CoroutineTypeText($"{playerUnit.Monster.BaseMonster.Name} ha subido al nivel {playerUnit.Monster.Level}.");
 
                 //Try to learn a new move

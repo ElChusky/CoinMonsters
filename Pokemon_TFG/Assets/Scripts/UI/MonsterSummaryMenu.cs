@@ -40,8 +40,13 @@ public class MonsterSummaryMenu : MonoBehaviour
         monsterName.text = monster.BaseMonster.Name;
         monsterImage.sprite = monster.BaseMonster.Sprite;
         level.text = monster.Level.ToString();
+
         type1.text = monster.BaseMonster.Type1.ToString();
-        type2.text = monster.BaseMonster.Type2.ToString();
+        if (monster.BaseMonster.Type2 == MonsterType.Ninguno)
+            type2.text = "-";
+        else
+            type2.text = monster.BaseMonster.Type2.ToString();
+
         currentHP.text = monster.CurrentHP.ToString();
         maxHP.text = monster.MaxHp.ToString();
         attack.text = monster.Attack.ToString();

@@ -11,6 +11,7 @@ public class MotherNPC : MonoBehaviour, Interactable, ISavable
 
     private Character character;
     private Vector3 originalPos;
+    private HealingParty healing;
 
     private bool gaveMonster;
 
@@ -18,6 +19,7 @@ public class MotherNPC : MonoBehaviour, Interactable, ISavable
     {
         originalPos = transform.position;
         character = GetComponent<Character>();
+        healing = GetComponent<HealingParty>();
     }
 
     private void Update()
@@ -31,7 +33,9 @@ public class MotherNPC : MonoBehaviour, Interactable, ISavable
             StartCoroutine(OnActivatorTriggered(initiator.GetComponent<PlayerController>()));
         else
         {
+            character.LookTowards(initiator.position);
             StartCoroutine(DialogManager.Instance.ShowDialog(dialogAfterGiveMonster));
+            healing.HealParty(initiator.GetComponent<PlayerController>());
         }
     }
 
@@ -57,12 +61,9 @@ public class MotherNPC : MonoBehaviour, Interactable, ISavable
             {
                 BaseMonster baseMonster = MonstersDB.GetMonsterByName("Empig");
                 Monster monster = new Monster(baseMonster, 5);
-                foreach (var move in monster.LearntMoves)
-                {
-                    Debug.Log(move.Name);
-                }
                 player.GetComponent<MonsterParty>().AddMonster(monster);
                 gaveMonster = true;
+                GameController.Instance.LastHealPosition = player.transform.position;
             }));
         }));
 

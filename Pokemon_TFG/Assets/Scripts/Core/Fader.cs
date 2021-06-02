@@ -23,4 +23,9 @@ public class Fader : MonoBehaviour
         yield return fader.DOFade(0f, time).WaitForCompletion();
     }
 
+    public IEnumerator InstantFadeIn()
+    {
+        yield return fader.DOFade(1f, 0f);
+    }
+
 }

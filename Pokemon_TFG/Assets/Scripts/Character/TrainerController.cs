@@ -13,6 +13,7 @@ public class TrainerController : MonoBehaviour, Interactable, ISavable
     [SerializeField] GameObject fov;
 
     private Character character;
+    private Vector3 originalPosition;
     private bool battleLost = false;
 
     private void Awake()
@@ -33,6 +34,8 @@ public class TrainerController : MonoBehaviour, Interactable, ISavable
         if (!battleLost)
         {
             TrainerPerformingAction = true;
+
+            GameController.Instance.prevMusic = fov.GetComponent<TrainerFov>().AudioManager.audioSource.clip;
 
             fov.GetComponent<TrainerFov>().AudioManager.ChangeMusic(fov.GetComponent<TrainerFov>().TrainerMusic);
 
@@ -55,6 +58,10 @@ public class TrainerController : MonoBehaviour, Interactable, ISavable
     public IEnumerator TriggerTrainerBattle(PlayerController player)
     {
         TrainerPerformingAction = true;
+
+        yield return new WaitUntil(() => GetComponent<NPCController>().patternFinished);
+
+        originalPosition = transform.position;
 
         exclamationMark.SetActive(true);
         yield return new WaitForSeconds(0.5f);
@@ -88,6 +95,18 @@ public class TrainerController : MonoBehaviour, Interactable, ISavable
             angle = 0;
 
         fov.transform.eulerAngles = new Vector3(0, 0, angle);
+    }
+
+    public void EndBattle(bool playerWon)
+    {
+        if (playerWon)
+        {
+            BattleLost();
+        } else
+        {
+            transform.position = originalPosition;
+            TrainerPerformingAction = false;
+        }
     }
 
     public void BattleLost()

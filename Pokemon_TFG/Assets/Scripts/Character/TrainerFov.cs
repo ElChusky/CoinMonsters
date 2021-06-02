@@ -15,6 +15,7 @@ public class TrainerFov : MonoBehaviour, IPlayerTriggerable
 
     public void OnPlayerTriggered(PlayerController player)
     {
+        GameController.Instance.prevMusic = audioManager.audioSource.clip;
         audioManager.ChangeMusic(newMusic);
         player.Character.IsRunning = false;
         player.Character.IsMoving = false;
