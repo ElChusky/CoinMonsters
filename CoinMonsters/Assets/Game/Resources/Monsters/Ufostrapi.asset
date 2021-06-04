@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Ufostrapi
   m_EditorClassIdentifier: 
   name: Ufostrapi
-  sprite: {fileID: 21300000, guid: 001e3b5774985594db2e5f9d9501a0e0, type: 3}
+  sprite: {fileID: 21300000, guid: 9f39a931daef17d40a25387e3a99fe57, type: 3}
   type1: 4
   type2: 17
   maxHp: 25
