@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d19d758740d6a74296fc0ff16d98d10, type: 3}
+  m_Name: Ninfox
+  m_EditorClassIdentifier: 
+  name: Ninfox
+  sprite: {fileID: 21300000, guid: 69b56126e8fb8b54f9ef5b80aba6cb18, type: 3}
+  type1: 5
+  type2: 0
+  maxHp: 40
+  attack: 45
+  defense: 35
+  spAttack: 65
+  spDefense: 55
+  speed: 70
+  catchRate: 45
+  baseExp: 62
+  growthRate: 2
+  learnableMoves:
+  - move: {fileID: 11400000, guid: 7945f5149798a2d4b96a9742b2ae36e2, type: 2}
+    level: 1
+  - move: {fileID: 11400000, guid: ab606f4c47fc1ed47a7bd0e50412f90f, type: 2}
+    level: 1
+  - move: {fileID: 11400000, guid: d8c6b899959585347b630bd573e27f2d, type: 2}
+    level: 6
+  - move: {fileID: 11400000, guid: 268700d228690344cb5d5274c95e6a1a, type: 2}
+    level: 9
+  - move: {fileID: 11400000, guid: 7e1c09d1bc0b4564a977cb73911d6a1d, type: 2}
+    level: 12
