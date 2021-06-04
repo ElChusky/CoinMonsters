@@ -186,7 +186,7 @@ public class GameController : MonoBehaviour
         yield return fader.FadeOut(0.5f);
     }
 
-    public void StartBattle(MapArea mapArea)
+    public void StartBattle(Monster wildMonster)
     {
         StartCoroutine(FadeOutStartBattle());
         state = GameState.Battle;
@@ -194,7 +194,6 @@ public class GameController : MonoBehaviour
         worldCamera.gameObject.SetActive(false);
 
         MonsterParty playerParty = playerController.GetComponent<MonsterParty>();
-        Monster wildMonster = mapArea.GetWildMonster();
 
         Monster wildMonsterCopy = new Monster(wildMonster.BaseMonster, wildMonster.Level);
 

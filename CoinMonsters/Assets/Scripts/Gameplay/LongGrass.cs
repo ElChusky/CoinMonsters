@@ -67,6 +67,11 @@ public class LongGrass : MonoBehaviour, IPlayerTriggerable
 
     private IEnumerator StartBattle(MapArea mapArea)
     {
+        Monster wildMonster = mapArea.GetWildMonster();
+
+        if (wildMonster == null)
+            yield break;
+
         GameController.Instance.prevMusic = audioManager.audioSource.clip;
 
         audioManager.ChangeMusic(newMusic);
@@ -75,6 +80,6 @@ public class LongGrass : MonoBehaviour, IPlayerTriggerable
 
         yield return fader.FadeIn(0.5f);
 
-        GameController.Instance.StartBattle(mapArea);
+        GameController.Instance.StartBattle(wildMonster);
     }
 }

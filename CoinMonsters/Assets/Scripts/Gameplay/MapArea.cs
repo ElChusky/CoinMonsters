@@ -24,7 +24,11 @@ public class MapArea : MonoBehaviour
                 }
             }
             Rarity--;
-        } while (monstersWithRarity.Count == 0);
+        } while (monstersWithRarity.Count == 0 && Rarity != 0);
+
+        if (monstersWithRarity.Count == 0)
+            return null;
+
         //We return a random Monster of the list
         Monster monster = monstersWithRarity[Random.Range(0, monstersWithRarity.Count)];
         monster.Init();
